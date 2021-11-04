@@ -1,0 +1,14 @@
+##############################################################################
+##  Raspberry Pi no longer has its own Makefiles.  It uses the default Linux
+##  Makefiles instead.
+##
+##  If you want to make a binary release of jzIntv for, say, the Ultimate
+##  Flashback, consider copying or symlinking the file
+##  buildcfg/10-opt-for-linux-rpi-release.mak.txt to buildcfg/10-opt.mak
+##
+##  See buildcfg/README.txt for more information on how buildcfg/ works.
+##
+##  Also, if you have GNU_READLINE installed, comment out the line below.
+##############################################################################
+GNU_READLINE := 0
+include Makefile.linux_sdl2

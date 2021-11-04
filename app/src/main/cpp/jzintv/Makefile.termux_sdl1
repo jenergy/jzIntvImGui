@@ -1,0 +1,124 @@
+##############################################################################
+## Source-level Makefile for jzintv
+##
+## The whole make process is driven from the top-level Makefile.  In contrast
+## to the (poor) advice given in the Make documentation, I do _not_ call make
+## recursively to build the source of this project.
+##############################################################################
+
+##############################################################################
+## Project directory structure
+##############################################################################
+B=../bin
+L=../lib
+R=../rom
+
+##############################################################################
+## Project-wide build flags
+##############################################################################
+P           = export PATH;
+
+SDL1_CFLAGS := $(shell sdl-config --cflags)
+SDL1_LFLAGS := $(shell sdl-config --libs)
+
+#SVN_REV := $(shell (svn info -R || :) | grep "Last Changed Rev:" | cut -d' ' -f4 | sort -n | tail -1)
+#SVN_DTY := $(shell echo `(svn status || :) | grep -v '^?' | wc -l`)
+
+# Set "X" to be the executable extension, and "O" to be the object extension.
+X =        
+O = o
+
+# Set "RM" to be the remove/delete command
+RM = rm -f 
+
+ WARN    = -Wall -W -Wextra -Wshadow -Wpointer-arith
+ WARN   += -Wbad-function-cast -Wcast-qual -Wc++-compat
+ WARN   += -Wmissing-declarations -Wmissing-prototypes
+ WARN   += -Wstrict-prototypes -Wstrict-aliasing
+ WARN   += -Werror
+
+ WARNXX  = -Wall -W -Wextra -Wshadow -Wpointer-arith 
+ WARNXX += -Wcast-qual -Wsequence-point
+ WARNXX += -Wc++11-compat -Wc++14-compat -Wc++1z-compat
+ WARNXX += -Werror -Wstrict-aliasing
+
+
+ CC  = $(P) clang -std=c99
+ CXX = $(P) clang -std=c++14
+
+# I think this can be retired now.
+#DEF_FLAGS += -Dtermux
+
+ LTO = -flto
+
+#OPT_FLAGS = -ggdb3
+#OPT_FLAGS = -O
+#OPT_FLAGS = -O2 -ggdb3 -pg
+ OPT_FLAGS =  $(LTO) -O3 -fomit-frame-pointer
+ OPT_FLAGS += -fvisibility=hidden -fstrict-aliasing
+
+#OPT_FLAGS += -DBENCHMARK_STIC
+
+CFLAGS    = $(OPT_FLAGS) $(WARN)   -I. -I.. $(DEF_FLAGS) $(EXTRA)
+CXXFLAGS  = $(OPT_FLAGS) $(WARNXX) -I. -I.. $(DEF_FLAGS) $(EXTRA)
+LFLAGS    = -L../lib
+LFLAGS   += -L/data/data/com.termux/files/usr/lib
+LFLAGS   += -lstdc++
+LFLAGS   += -lm
+
+# Termux does not like static linking.
+SLFLAGS   = $(LFLAGS)
+
+CFLAGS   += -ffunction-sections -fdata-sections
+
+OBJS      = jzintv.$(O)
+PROG_SDL1 = $(B)/jzintv
+PROG_NULL = $(B)/jzintv_batch
+TOCLEAN  += $(PROG_SDL1)
+TOCLEAN  += $(PROG_NULL)
+TOCLEAN  += core
+
+# Do not include SDL1_LFLAGS in our default link flags; include them explicitly
+# for targets that link against SDL. SDL1_CFLAGS should be harmless for everyone.
+CFLAGS += $(SDL1_CFLAGS) 
+#LFLAGS += $(SDL1_LFLAGS)
+
+
+##############################################################################
+## Generic build-rules
+##############################################################################
+
+all: build
+
+$(PROG_SDL1): $(OBJS) $(OBJS_SDL1)
+	$(CXX) -o $(PROG_SDL1) $(OBJS) $(OBJS_SDL1) $(CFLAGS) $(SDL1_LFLAGS) $(LFLAGS)
+
+$(PROG_NULL): $(OBJS) $(OBJS_NULL) svn_revision.$(O)
+	$(CXX) -o $(PROG_NULL) $(OBJS) $(OBJS_NULL) $(CFLAGS) $(SLFLAGS)
+
+clean:
+	$(RM) $(OBJS) 
+	$(RM) $(OBJS_SDL1) 
+	$(RM) $(OBJS_NULL) 
+	$(RM) $(TOCLEAN)
+
+%.$(O): %.c
+	$(CC) -o $@ $(CFLAGS) -c $<
+
+%.s: %.c
+	$(CC) -fverbose-asm -S -o $@ $(CFLAGS) -c $<
+
+##############################################################################
+## Linux-specific stuff
+##############################################################################
+
+pads/pads_intv2pc.$(O):
+	$(CC) -O3 -o pads/pads_intv2pc.$(O) $(CFLAGS) -c pads/pads_intv2pc.c
+
+OBJS += pads/pads_intv2pc.$(O)
+
+##############################################################################
+## Makefile.common includes all the subMakefiles and such
+##############################################################################
+include Makefile.common
+build: jzIntv SDK-1600

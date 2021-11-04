@@ -1,0 +1,8 @@
+##############################################################################
+## subMakefile for cheat
+##############################################################################
+
+cheat/cheat.$(O): cheat/cheat.c cheat/cheat.h cheat/subMakefile config.h
+cheat/cheat.$(O): cp1600/cp1600.h periph/periph.h plat/plat_lib.h
+
+OBJS += cheat/cheat.$(O)

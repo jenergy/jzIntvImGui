@@ -1,0 +1,9 @@
+##############################################################################
+## subMakefile for Emscripten
+##############################################################################
+
+# Embedded files for the web browser
+emscripten/web_files.$(O): emscripten/web_files.h
+
+OBJS += emscripten/web_files.$(O)
+

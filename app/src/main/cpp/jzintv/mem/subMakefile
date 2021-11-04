@@ -1,0 +1,8 @@
+##############################################################################
+## subMakefile for mem
+##############################################################################
+
+mem/mem.$(O): mem/mem.c mem/mem.h mem/subMakefile periph/periph.h config.h
+mem/mem.$(O): cp1600/cp1600.h
+
+OBJS += mem/mem.$(O)

@@ -1,0 +1,23 @@
+##############################################################################
+## subMakefile for plat
+##############################################################################
+
+plat/plat_sdl.$(O): plat/plat_sdl.c plat/plat.h config.h plat/subMakefile
+plat/plat_sdl.$(O): plat/plat_lib_config.h
+plat/plat_lib.$(O): plat/plat_lib.c plat/plat_lib.h config.h plat/subMakefile
+plat/plat_lib.$(O): plat/plat_lib_config.h
+plat/plat_lib.$(O): sdl_jzintv.h
+plat/plat_gen.$(O): plat/plat_gen.c plat/plat_lib.h config.h plat/subMakefile
+plat/gnu_getopt.$(O): plat/gnu_getopt.c plat/gnu_getopt.h plat/subMakefile
+plat/main_sdl.$(O):  config.h sdl_jzintv.h
+plat/main_null.$(O): config.h
+
+OBJS      += plat/plat_lib.$(O) plat/gnu_getopt.$(O) plat/plat_gen.$(O)
+OBJS_SDL1 += plat/plat_sdl.$(O) plat/main_sdl.$(O)
+OBJS_SDL2 += plat/plat_sdl.$(O) plat/main_sdl.$(O)
+OBJS_NULL += plat/plat_null.$(O) plat/main_null.$(O)
+
+config.h: plat/plat_lib.h
+
+plat/plat_lib.$(O):
+	$(CC) $(FO)plat/plat_lib.$(O) $(CFLAGS) $(RL_CFLAGS) -c plat/plat_lib.c

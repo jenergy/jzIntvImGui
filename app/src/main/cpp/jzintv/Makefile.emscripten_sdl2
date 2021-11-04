@@ -1,0 +1,113 @@
+##############################################################################
+## Source-level Makefile for jzintv in Emscripten
+##
+## The whole make process is driven from the top-level Makefile.  In contrast
+## to the (poor) advice given in the Make documentation, I do _not_ call make
+## recursively to build the source of this project.
+##############################################################################
+
+##############################################################################
+## Project directory structure
+##############################################################################
+B=../bin
+L=../lib
+R=../rom
+
+##############################################################################
+## Project-wide build flags
+##############################################################################
+P           = export PATH;
+
+.SUFFIXES: .html
+
+SDL2_CFLAGS := -s USE_SDL=2 -DUSE_SDL2
+SDL2_LFLAGS := -s USE_SDL=2 -DUSE_SDL2
+
+SVN_REV := $(shell (svn info -R || :) | grep "Last Changed Rev:" | cut -d' ' -f4 | sort -n | tail -1)
+SVN_DTY := $(shell echo $$( (svn status || :) | grep -v '^?' | wc -l ) )
+
+# Set "X" to be the executable extension, and "O" to be the object extension.
+X = .html
+O = o
+
+# Set "RM" to be the remove/delete command
+RM = rm -f 
+
+# Rely on mainstream targets for warning checks.
+ WARN    = -Wall -W -Wextra
+ WARNXX  = -Wall -W -Wextra
+
+ CC  = $(P) emcc -fwrapv
+ CXX = $(P) em++ --std=c++14 -fwrapv
+
+#DEF_FLAGS += -DDIRECT_INTV2PC
+#DEF_FLAGS += -DNEED_INOUT
+
+ LTO = 
+
+ OPT_FLAGS =  $(LTO) -O3
+#OPT_FLAGS =  $(LTO) -g3
+
+CFLAGS   = $(OPT_FLAGS) $(WARN)   -I. -I.. $(DEF_FLAGS) $(EXTRA)
+CXXFLAGS = $(OPT_FLAGS) $(WARNXX) -I. -I.. $(DEF_FLAGS) $(EXTRA)
+
+CFLAGS   += -s NO_EXIT_RUNTIME=0 -s TOTAL_MEMORY=134217728
+CXXFLAGS += -s NO_EXIT_RUNTIME=0 -s TOTAL_MEMORY=134217728
+
+OBJS      = jzintv_em.$(O)
+PROG_SDL2 = $(B)/jzintv$(X)
+PROG_NULL = $(B)/jzintv_batch$(X)
+TOCLEAN  += $(PROG_SDL2)
+TOCLEAN  += $(PROG_NULL)
+TOCLEAN  += core
+
+CFLAGS += $(SDL2_CFLAGS) 
+
+##############################################################################
+## Generic build-rules
+##############################################################################
+
+all: build
+
+$(PROG_SDL2): $(OBJS) $(OBJS_SDL2)
+	$(CXX) -o $(PROG_SDL2) $(OBJS) $(OBJS_SDL2) $(CFLAGS) $(SDL2_LFLAGS) $(LFLAGS)
+
+clean:
+	$(RM) $(OBJS) 
+	$(RM) $(OBJS_SDL2) 
+	$(RM) $(OBJS_NULL) 
+	$(RM) $(TOCLEAN)
+
+%.$(O): %.c
+	$(CC) -o $@ $(CFLAGS) -c $<
+
+%.s: %.c
+	$(CC) -fverbose-asm -S -o $@ $(CFLAGS) -c $<
+
+##############################################################################
+## Emscripten-specific stuff
+##############################################################################
+
+pads/pads_intv2pc.$(O):
+	$(CC) -O3 -o pads/pads_intv2pc.$(O) $(CFLAGS) -c pads/pads_intv2pc.c
+
+OBJS_SDL2 += pads/pads_cgc_linux.$(O)
+OBJS += pads/pads_intv2pc.$(O)
+
+##############################################################################
+## Makefile.common includes all the subMakefiles and such
+##############################################################################
+include emscripten/subMakefile
+include Makefile.common
+build: jzIntv
+
+jzintv_em.$(O): config.h periph/periph.h cp1600/cp1600.h mem/mem.h
+jzintv_em.$(O): pads/pads.h debug/debug_.h cp1600/op_decode.h cp1600/op_exec.h
+jzintv_em.$(O): stic/stic.h speed/speed.h gfx/gfx.h snd/snd.h ay8910/ay8910.h
+jzintv_em.$(O): plat/plat.h plat/plat_lib.h event/event.h event/event_tbl.h
+jzintv_em.$(O): file/file.h ivoice/ivoice.h icart/icart.h cp1600/req_q.h
+jzintv_em.$(O): bincfg/legacy.h bincfg/bincfg.h pads/pads_intv2pc.h
+jzintv_em.$(O): demo/demo.h cfg/cfg.h cfg/mapping.h misc/jzprint.h avi/avi.h
+jzintv_em.$(O): name/name.h misc/file_crc32.h jlp/jlp.h locutus/locutus_adapt.h
+jzintv_em.$(O): emscripten/web_files.h
+

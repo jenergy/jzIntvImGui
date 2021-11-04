@@ -1,0 +1,4 @@
+name;tester Proj;tester.imp
+source;test.asm;c:\mydev\imasm\test.asm
+source;test2.asm;c:\mydev\test2.asm
+include;something.inc;c:\mydev\something.inc

@@ -1,0 +1,67 @@
+##############################################################################
+## subMakefile for LOCUTUS
+##############################################################################
+
+locutus/locutus_adapt.$(O): locutus/locutus.hpp locutus/luigi.hpp
+locutus/locutus_adapt.$(O): locutus/locutus_types.hpp
+locutus/locutus_adapt.$(O): locutus/locutus_adapt.h
+locutus/locutus_adapt.$(O): metadata/metadata.h misc/types.h
+locutus/locutus_adapt.$(O): periph/periph.h config.h 
+locutus/locutus_adapt.$(O): cp1600/cp1600.h cp1600/req_q.h
+locutus/locutus_adapt.$(O): locutus/subMakefile
+
+locutus/locutus.$(O): locutus/locutus.hpp 
+locutus/locutus.$(O): locutus/locutus_types.hpp
+locutus/locutus.$(O): locutus/subMakefile 
+locutus/locutus.$(O): $(METADATA_HDRS)
+
+locutus/luigi.$(O): locutus/locutus.hpp locutus/luigi.hpp
+locutus/luigi.$(O): locutus/locutus_types.hpp
+locutus/luigi.$(O): locutus/subMakefile 
+locutus/luigi.$(O): $(METADATA_HDRS)
+
+locutus/locutus_types.$(O): locutus/locutus_types.hpp
+locutus/locutus_types.$(O): misc/ll.h
+locutus/locutus_types.$(O): misc/types.h
+locutus/locutus_types.$(O): bincfg/bincfg.h
+locutus/locutus_types.$(O): $(METADATA_HDRS)
+
+locutus/loc_to_bin.$(O): locutus/locutus.hpp 
+locutus/loc_to_bin.$(O): locutus/locutus_types.hpp 
+locutus/loc_to_bin.$(O): locutus/luigi.hpp 
+locutus/loc_to_bin.$(O): locutus/subMakefile
+locutus/loc_to_bin.$(O): config.h
+locutus/loc_to_bin.$(O): misc/types.h
+locutus/loc_to_bin.$(O): misc/printer.h
+locutus/loc_to_bin.$(O): $(METADATA_HDRS)
+
+locutus/bin_to_loc.$(O): locutus/locutus.hpp 
+locutus/bin_to_loc.$(O): locutus/locutus_types.hpp 
+locutus/bin_to_loc.$(O): locutus/luigi.hpp 
+locutus/bin_to_loc.$(O): locutus/subMakefile
+locutus/bin_to_loc.$(O): config.h lzoe/lzoe.h
+locutus/bin_to_loc.$(O): bincfg/bincfg.h misc/types.h misc/file_crc32.h
+locutus/bin_to_loc.$(O): $(METADATA_HDRS)
+
+locutus/rom_to_loc.$(O): locutus/locutus.hpp 
+locutus/rom_to_loc.$(O): locutus/locutus_types.hpp 
+locutus/rom_to_loc.$(O): locutus/luigi.hpp 
+locutus/rom_to_loc.$(O): locutus/subMakefile
+locutus/rom_to_loc.$(O): config.h icart/icartrom.h icart/icarttag.h
+locutus/rom_to_loc.$(O): misc/types.h
+locutus/rom_to_loc.$(O): $(METADATA_HDRS)
+
+OBJS += locutus/locutus.$(O)
+OBJS += locutus/luigi.$(O)
+OBJS += locutus/locutus_adapt.$(O)
+OBJS += locutus/locutus_types.$(O)
+OBJS += locutus/loc_to_bin.$(O)
+OBJS += locutus/bin_to_loc.$(O)
+OBJS += locutus/rom_to_loc.$(O)
+
+#PROGS   += $(B)/try_loc_to_bin$(X)
+#TOCLEAN += locutus/try_loc_to_bin.$(O)
+
+#$(B)/try_loc_to_bin$(X): locutus/try_loc_to_bin.$(O) locutus/loc_to_bin.$(O) locutus/locutus.$(O) locutus/luigi.$(O) locutus/locutus_types.$(O)
+#	$(CXX) $(FE)$(B)/try_loc_to_bin$(X) $(CXXFLAGS) locutus/try_loc_to_bin.$(O) locutus/loc_to_bin.$(O) locutus/locutus.$(O) locutus/luigi.$(O) locutus/locutus_types.$(O) $(SLFLAGS)
+

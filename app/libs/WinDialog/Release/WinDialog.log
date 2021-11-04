@@ -1,0 +1,10 @@
+﻿  pch.cpp
+  dllmain.cpp
+  WinDialog.cpp
+D:\DockerShare\Progetti\jzIntvImGui\app\libs\WinDialog\WinDialog.cpp(108,35): warning C4018: '<': errata corrispondenza tra signed e unsigned
+     Creazione della libreria D:\DockerShare\Progetti\jzIntvImGui\app\libs\WinDialog\Release\WinDialog.lib e dell'oggetto D:\DockerShare\Progetti\jzIntvImGui\app\libs\WinDialog\Release\WinDialog.exp
+  Generazione codice in corso...
+  Previous IPDB not found, fall back to full compilation.
+  All 66 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Generazione codice terminata
+  WinDialog.vcxproj -> D:\DockerShare\Progetti\jzIntvImGui\app\libs\WinDialog\Release\WinDialog.dll

@@ -1,0 +1,14 @@
+Notes for jzintv on OS X
+May 28, 2005 John Tanner
+
+Build notes:
+Must use a SDLMain.o new enough to be able to use CPS_* functions.
+These functions, in part, enable the program to hear keystrokes entered 
+into the main window.
+
+Usage notes:
+When running jzintv in a window, F10 and F11 are unavailable due to Exposé. 
+Remap these keys or run the program in full screen mode.
+
+Accelerator keys, such as Cmd-Q, etc. do not work with this version of
+jzintv. They are available in the GUI version.

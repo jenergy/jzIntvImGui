@@ -1,0 +1,86 @@
+##############################################################################
+## Source-level Makefile for jzintv
+##
+## The whole make process is driven from the top-level Makefile.  In contrast
+## to the (poor) advice given in the Make documentation, I do _not_ call make
+## recursively to build the source of this project.
+##############################################################################
+
+##############################################################################
+## Project directory structure
+##############################################################################
+B=../bin
+L=../lib
+R=../rom
+
+##############################################################################
+## Project-wide build flags
+##############################################################################
+P           = export PATH;
+
+SDL_DIR     = /usr/local
+
+SDL1_CFLAGS = -mcrt=clib2 -ISDK:Local/clib2/include/SDL -ISDK:Local/common/include/SDL -ISDK:Local/clib2/include/boost 
+#-D_REENTRANT
+SDL1_LFLAGS = -mcrt=clib2 -lSDL_gfx -lSDL_net -lSDL_image -ltiff -lpng -ljpeg -lz -lSDL_mixer -lsmpeg -lm -lvorbisfile -lvorbis -logg -lstdc++ -lSDL_ttf -lfreetype -lz -lsdlmain -lsdl -lauto -lport -lpthread -lm -lpthread -L/SDK/Local/clib2/lib/perl5
+#-L/SDK/PosixLib/AmigaOS4
+#SDL1_CFLAGS := $(shell sdl-config --cflags)
+#SDL1_LFLAGS := $(shell sdl-config --libs) 
+
+# Set "X" to be the executable extension, and "O" to be the object extension.
+X = 
+O = o
+
+# Set "RM" to be the remove/delete command
+RM = rm -f 
+
+ WARN    = -Wall -W -Wshadow -Wpointer-arith \
+	       -Wbad-function-cast -Wcast-qual 
+ WARNXX  = -Wall -W -Wshadow -Wpointer-arith -Wcast-qual 
+
+ CC  = $(P) gcc
+ CXX = $(P) g++
+
+#OPT_FLAGS = -ggdb 
+#OPT_FLAGS = -O
+#OPT_FLAGS = -O2 -ggdb
+ OPT_FLAGS = -O3 -fomit-frame-pointer #-DBENCHMARK_STIC
+#OPT_FLAGS = -O2 -pg -ggdb -DLOCAL=
+
+CFLAGS   = $(OPT_FLAGS) $(WARN)   -I. -I.. $(DEF_FLAGS) $(EXTRA)
+CXXFLAGS = $(OPT_FLAGS) $(WARNXX) -I. -I.. $(DEF_FLAGS) $(EXTRA)
+#LFLAGS   = /usr/local/lib/libgcc_s.so -L../lib 
+LFLAGS   = -L../lib 
+
+
+OBJS      = jzintv.$(O)
+PROG_SDL1 = $(B)/jzintv
+TOCLEAN   = $(B)/jzintv core
+
+#PROGS=$(PROG)
+
+CFLAGS += $(SDL1_CFLAGS) 
+LFLAGS += $(SDL1_LFLAGS)
+
+##############################################################################
+## Generic build-rules
+##############################################################################
+
+all: build
+
+$(PROG_SDL1): $(OBJS) $(OBJS_SDL1)
+	$(CC) -o $(PROG_SDL1) $(OBJS) $(OBJS_SDL1) $(CFLAGS) $(LFLAGS)
+
+clean:
+	$(RM) $(OBJS) $(OBJS_SDL1)
+#	$(RM) $(TOCLEAN)
+
+%.$(O): %.c
+	$(CC) -o $@ $(CFLAGS) -c $<
+
+##############################################################################
+## Makefile.common includes all the subMakefiles and such
+##############################################################################
+include Makefile.common
+# build: jzIntv SDK-1600
+build: jzIntv

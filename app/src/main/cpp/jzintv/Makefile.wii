@@ -1,0 +1,278 @@
+#-----------------------------------------------------------------------------
+# Hi, this wii Makefile is a natural evolution of the template makefile found
+# in tutorials of codemii:  
+#
+# 	http://www.codemii.com/category/wii-programming-tutorials/
+#
+# This hasn't been optimized, feel free to fix it.
+# It works on WIN32 with a valid installation of devkitPPC into devkitPro 
+# environment, and with a valid installation of the wii port of SDL library 
+# (http://www.libsdl.org/) for devkitpro.
+#
+# I noticed that these Makefiles seem to not work if launched from path 
+# containing spaces (ex: C:\Documents and settings....), and brackets didn't
+# help me, so launch it from a 'simple' path (ex: c:\jzintvwii)
+#
+# Enjoy!
+#
+# Daniele Moglia (daniele.moglia@gmail.com)
+#-----------------------------------------------------------------------------
+
+
+#---------------------------------------------------------------------------------
+# Clear the implicit built in rules
+#---------------------------------------------------------------------------------
+.SUFFIXES:
+#---------------------------------------------------------------------------------
+ifeq ($(strip $(DEVKITPPC)),)
+$(error "Please set DEVKITPPC in your environment. export DEVKITPPC=<path to>devkitPPC")
+endif
+
+include $(DEVKITPPC)/wii_rules
+
+#---------------------------------------------------------------------------------
+# TARGET is the name of the output
+# BUILD is the directory where object files & intermediate files will be placed
+# SOURCES is a list of directories containing source code
+# INCLUDES is a list of directories containing extra header files
+#---------------------------------------------------------------------------------
+TARGET		:=	$(notdir $(CURDIR))
+BUILD		:=	build_wii
+SOURCES		:=	.
+DATA		:=	data  
+INCLUDES	:=	include
+B           = ../bin
+
+#---------------------------------------------------------------------------------
+# options for code generation
+#---------------------------------------------------------------------------------
+USE_WITH_FRONTEND = 1
+CFLAGS	= -g -O2 -Wall $(MACHDEP) $(INCLUDE) -DWII
+ifdef USE_WITH_FRONTEND
+CFLAGS  += -DUSE_AS_BACKEND
+endif 
+CXXFLAGS	=	$(CFLAGS)
+LDFLAGS	=	-g $(MACHDEP) -Wl,-Map,$(notdir $@).map
+
+#---------------------------------------------------------------------------------
+# any extra libraries we wish to link with the project
+#---------------------------------------------------------------------------------
+LIBS    :=  -lSDL_net -lSDL_ttf -lSDL_gfx -lSDL_mixer -lSDL_image -lSDL -lsmpeg -lfat -lwiiuse -lbte -logc -lm -lwiikeyboard
+
+
+#---------------------------------------------------------------------------------
+# list of directories containing libraries, this must be the top level containing
+# include and lib
+#---------------------------------------------------------------------------------
+LIBDIRS	:=
+
+#---------------------------------------------------------------------------------
+# no real need to edit anything past this point unless you need to add additional
+# rules for different file extensions
+#---------------------------------------------------------------------------------
+ifneq ($(BUILD),$(notdir $(CURDIR)))
+#---------------------------------------------------------------------------------
+
+export OUTPUT	:=	$(CURDIR)/$(B)/$(TARGET)
+
+export VPATH	:=	$(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
+					$(foreach dir,$(DATA),$(CURDIR)/$(dir))
+
+export DEPSDIR	:=	$(CURDIR)/$(BUILD)
+
+#---------------------------------------------------------------------------------
+# automatically build a list of object files for our project
+#---------------------------------------------------------------------------------
+#CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
+
+CFILES = jzintv.c
+ifdef USE_WITH_FRONTEND
+  CFILES += jzintvWii-frontend.c
+endif
+CFILES += joy/joy_wii.c  
+CFILES += pads/pads_cgc_win32.c
+CFILES += pads/pads_intv2pc.c
+CFILES += cfg/cfg.c
+CFILES += cfg/usage.c
+CFILES += cfg/mapping.c
+CFILES += misc/crc32.c
+CFILES += misc/crc16.c
+CFILES += misc/avl.c
+CFILES += misc/ll.c
+CFILES += misc/jzprint.c
+CFILES += misc/file_crc32.c
+CFILES += plat/plat_sdl.c
+CFILES += plat/plat_lib.c
+CFILES += plat/plat_wii.c
+CFILES += plat/gnu_getopt.c
+CFILES += event/event.c
+CFILES += event/event_tbl.c
+CFILES += gfx/gfx.c
+CFILES += gfx/gfx_scale.c
+CFILES += snd/snd.c
+CFILES += mvi/mvi.c
+CFILES += debug/debug.c
+CFILES += debug/debug_dasm1600.c
+CFILES += util/symtab.c
+CFILES += periph/periph.c
+CFILES += cp1600/cp1600.c
+CFILES += cp1600/op_decode.c
+CFILES += cp1600/op_exec.c
+CFILES += cp1600/tbl/fn_cond_br.c
+CFILES += cp1600/tbl/fn_dir_2op.c
+CFILES += cp1600/tbl/fn_imm_2op.c
+CFILES += cp1600/tbl/fn_impl_1op_a.c
+CFILES += cp1600/tbl/fn_impl_1op_b.c
+CFILES += cp1600/tbl/fn_ind_2op.c
+CFILES += cp1600/tbl/fn_reg_1op.c
+CFILES += cp1600/tbl/fn_reg_2op.c
+CFILES += cp1600/tbl/fn_rot_1op.c
+CFILES += cp1600/tbl/formats.c
+CFILES += cp1600/emu_link.c
+CFILES += mem/mem.c
+CFILES += icart/icart.c
+CFILES += icart/icartrom.c
+CFILES += icart/icartbin.c
+CFILES += icart/icartfile.c
+CFILES += stic/stic.c
+CFILES += pads/pads.c
+CFILES += pads/pads_cgc.c
+CFILES += ay8910/ay8910.c
+CFILES += ivoice/ivoice.c
+CFILES += speed/speed.c
+CFILES += file/file.c
+CFILES += bincfg/bincfg.c
+CFILES += bincfg/bincfg_grmr.tab.c
+CFILES += bincfg/bincfg_lex.c
+CFILES += bincfg/legacy.c
+CFILES += gif/gif_enc.c
+CFILES += gif/lzw_enc.c
+CFILES += demo/demo.c
+CFILES += joy/joy.c
+CFILES += name/name.c
+CFILES += name/name_list.c
+CFILES += serializer/serializer.c
+CFILES += minilzo/minilzo.c
+CFILES += jlp/jlp.c
+
+CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
+sFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
+SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.S)))
+BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*)))
+
+#---------------------------------------------------------------------------------
+# use CXX for linking C++ projects, CC for standard C
+#---------------------------------------------------------------------------------
+ifeq ($(strip $(CPPFILES)),)
+	export LD	:=	$(CC)
+else
+	export LD	:=	$(CXX)
+endif
+
+export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
+					$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) \
+					$(sFILES:.s=.o) $(SFILES:.S=.o)
+
+#---------------------------------------------------------------------------------
+# build a list of include paths
+#---------------------------------------------------------------------------------
+export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
+					$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
+					-I$(CURDIR)/$(BUILD) \
+					-I$(LIBOGC_INC)
+
+#---------------------------------------------------------------------------------
+# build a list of library paths
+#---------------------------------------------------------------------------------
+export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib) \
+					-L$(LIBOGC_LIB)
+
+export OUTPUT	:=	$(CURDIR)/$(B)/boot
+.PHONY: $(BUILD) clean
+
+#---------------------------------------------------------------------------------
+$(BUILD):
+	[ -d $@ ] || mkdir -p $@
+	cp -rf $(CFILES) $(BUILD)
+	cp -rf cfg $(BUILD)
+	cp -rf plat $(BUILD)	
+	cp -rf misc $(BUILD)
+	cp -rf icart $(BUILD)
+	cp -rf debug $(BUILD)
+	cp -rf event $(BUILD)
+	cp -rf ivoice $(BUILD)
+	cp -rf jlp $(BUILD)
+	cp -rf file $(BUILD)
+	cp -rf periph $(BUILD)
+	cp -rf cp1600 $(BUILD)
+	cp -rf mem $(BUILD)
+	cp -rf bincfg $(BUILD)
+	cp -rf pads $(BUILD)
+	cp -rf gfx $(BUILD)
+	cp -rf snd $(BUILD)
+	cp -rf demo $(BUILD)
+	cp -rf stic $(BUILD)
+	cp -rf speed $(BUILD)
+	cp -rf serializer $(BUILD)
+	cp -rf ay8910 $(BUILD)
+	cp -rf name $(BUILD)
+	cp -rf joy $(BUILD)
+	cp -rf mvi $(BUILD)
+	cp -rf gif $(BUILD)
+	cp -rf util $(BUILD)
+	cp -rf minilzo $(BUILD)
+	cp *.h $(BUILD)
+	make --no-print-directory -C $(BUILD) -f "$(CURDIR)/Makefile.wii"
+
+#---------------------------------------------------------------------------------
+clean:
+	@echo clean ...
+	rm -fr $(OUTPUT).elf $(OUTPUT).dol $(BUILD) *.o
+#---------------------------------------------------------------------------------
+run:
+	psoload $(TARGET).dol
+
+#---------------------------------------------------------------------------------
+reload:
+	psoload -r $(TARGET).dol
+
+
+#---------------------------------------------------------------------------------
+else
+
+DEPENDS	:=	$(OFILES:.o=.d)
+
+#---------------------------------------------------------------------------------
+# main targets
+#---------------------------------------------------------------------------------
+$(OUTPUT).dol: $(OUTPUT).elf
+$(OUTPUT).elf: $(OFILES)
+
+#---------------------------------------------------------------------------------
+# This rule links in binary data with the .jpg extension
+#---------------------------------------------------------------------------------
+%.jpg.o	:	%.jpg
+#---------------------------------------------------------------------------------
+	echo $(notdir $<)
+	$(bin2o)
+
+-include $(DEPENDS)
+
+#---------------------------------------------------------------------------------
+# This rule links in binary data
+#---------------------------------------------------------------------------------
+%.bin.o	:	%.bin
+#---------------------------------------------------------------------------------
+	echo $(notdir $<)
+	$(bin2o)
+
+%.mod.o	:	%.mod
+#---------------------------------------------------------------------------------
+	echo $(notdir $<)
+	$(bin2o)
+
+-include $(DEPENDS)
+
+#---------------------------------------------------------------------------------
+endif
+#---------------------------------------------------------------------------------

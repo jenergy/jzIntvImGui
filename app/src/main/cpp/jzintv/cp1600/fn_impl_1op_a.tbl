@@ -1,0 +1,13 @@
+##############################################################################
+#
+# Implied 1-op instructions
+# 
+##############################################################################
+2,  "fn_invalid,"
+00, "fn_HLT,"
+01, "fn_SDBD,"
+10, "fn_EIS,"
+11, "fn_DIS,"
+
+.prolog "/* Auto generated, do not edit */\n\n#include \"cp1600/op_tables.h\"\nconst cp1600_ins_t fn_impl_1op_a[] =\n{"
+.epilog "};\n"

@@ -1,0 +1,17 @@
+##############################################################################
+## subMakefile for gif
+##############################################################################
+
+gif/gif_enc.$(O): gif/gif_enc.c gif/gif_enc.h gif/lzw_enc.h gif/subMakefile
+gif/gif_enc.$(O): config.h file/file.h
+gif/lzw_enc.$(O): gif/lzw_enc.c gif/lzw_enc.h gif/subMakefile
+gif/lzw_enc.$(O): config.h 
+gif/test_lzw_enc.$(O): gif/lzw_enc.h config.h gif/subMakefile
+
+OBJS += gif/gif_enc.$(O) gif/lzw_enc.$(O)
+
+#$(B)/test_lzw_enc$(X): gif/test_lzw_enc.$(O) gif/lzw_enc.$(O)
+#	$(CC) $(FE)$(B)/test_lzw_enc$(X) $(CFLAGS) gif/test_lzw_enc.$(O) gif/lzw_enc.$(O) $(LFLAGS)
+
+#TOCLEAN += gif/test_lzw_enc.$(O) 
+#PROGS   += $(B)/test_lzw_enc$(X)

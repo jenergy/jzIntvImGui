@@ -1,0 +1,69 @@
+##############################################################################
+## MingW32 Win32-Cross-Compile Variant of AS1600 MAKEFILE
+##############################################################################
+
+##############################################################################
+## Project directory structure
+##############################################################################
+B=../../bin
+
+##############################################################################
+## Project-wide build flags
+##############################################################################
+P         = PATH=/usr/local/win32/bin:$$PATH; export PATH;
+
+#WARN    = -Wall -W -Wshadow -Wpointer-arith \
+#WARN   += -Wbad-function-cast -Wcast-qual 
+WARN =
+
+CC = $(P) gcc
+
+ DEF_FLAGS  = -DWIN32 -DNOGETOPT -DDOSTMP
+
+#OPT_FLAGS = -O
+#OPT_FLAGS = -O2 -ggdb $(WARN)
+ OPT_FLAGS = -O6 $(WARN)
+#OPT_FLAGS = -O2 -pg -ggdb $(WARN) 
+
+CFLAGS = $(OPT_FLAGS) -I. -I.. $(DEF_FLAGS)
+LFLAGS = -L../lib 
+
+PROG    = $(B)/as1600.exe
+TOCLEAN = $(B)/as1600.exe $(ASMOBJ) as1600.c
+
+##############################################################################
+## Build-rules
+##############################################################################
+
+all: $(PROG)
+
+clean:
+	rm -f $(OBJS) 
+	rm -f $(TOCLEAN)
+
+%.o: %.c
+	$(CC) -o $@ $(CFLAGS) -c $<
+
+ASMSRC = as1600.c fraosub.c frapsub.c frasmain.c fryylex.c
+ASMOBJ = as1600.o fraosub.o frapsub.o frasmain.o fryylex.o
+
+$(B)/as1600.exe: $(ASMOBJ)
+	$(CC) -o $(B)/as1600.exe $(CFLAGS) -static $(ASMOBJ) -lm
+
+as1600.o:   fraebin.h fraeuni.h fragcon.h frasmdat.h
+fraosub.o:  fraebin.h fraeuni.h fragcon.h frasmdat.h
+frapsub.o:  fraebin.h fraeuni.h fragcon.h frasmdat.h
+frasmain.o: fraebin.h fraeuni.h fragcon.h frasmdat.h
+fryylex.o:  fraebin.h fraeuni.h fragcon.h frasmdat.h
+
+as1600.o:   as1600.y as1600.c as1600.h
+fraosub.o:  as1600.y as1600.c as1600.h
+frapsub.o:  as1600.y as1600.c as1600.h
+frasmain.o: as1600.y as1600.c as1600.h
+fryylex.o:  as1600.y as1600.c as1600.h
+
+as1600.c: as1600.y
+	bison -o as1600.c --defines as1600.y
+
+
+all: $(PROG)

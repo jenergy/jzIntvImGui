@@ -1,0 +1,18 @@
+##############################################################################
+#
+# Function pointer table, dir_2op format
+#
+##############################################################################
+3
+
+000,    "fn_invalid,"
+001,    "fn_MVO_dr,"
+010,    "fn_MVI_dr,"
+011,    "fn_ADD_dr,"
+100,    "fn_SUB_dr,"
+101,    "fn_CMP_dr,"
+110,    "fn_AND_dr,"
+111,    "fn_XOR_dr,"
+
+.prolog "/* Auto generated, do not edit */\n\n#include \"cp1600/op_tables.h\"\nconst cp1600_ins_t fn_dir_2op[] =\n{"
+.epilog "};\n"

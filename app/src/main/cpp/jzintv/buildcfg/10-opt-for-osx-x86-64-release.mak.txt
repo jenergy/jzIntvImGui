@@ -1,0 +1,11 @@
+# These are the architecture flags I use for the jzIntv OS/X x86-64 binary
+# release.
+#
+# The -msse3 target seems to encompass the range of Macs the min-OS version
+# targets, so this seems like a safe choice.
+#
+# See buildcfg/10-opt-for-native.mak.txt for options you might want when
+# building for yourself.
+ifneq ($(DEBUG),1)
+  OPT_FLAGS += -msse3 -mtune=generic
+endif

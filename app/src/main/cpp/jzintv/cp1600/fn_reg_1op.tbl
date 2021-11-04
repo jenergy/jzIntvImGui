@@ -1,0 +1,17 @@
+##############################################################################
+#
+# Register 1-op instructions
+#
+##############################################################################
+3, "fn_invalid,"
+
+001,    "fn_INCR_r,"
+010,    "fn_DECR_r,"
+011,    "fn_COMR_r,"
+100,    "fn_NEGR_r,"
+101,    "fn_ADCR_r,"
+111,    "fn_RSWD_r,"
+
+
+.prolog "/* Auto generated, do not edit */\n\n#include \"cp1600/op_tables.h\"\nconst cp1600_ins_t fn_reg_1op[] =\n{"
+.epilog "};\n"

@@ -1,0 +1,8 @@
+##############################################################################
+## subMakefile for ECS
+##############################################################################
+
+ecs/ecs.$(O): ecs/ecs.c ecs/ecs.h ecs/subMakefile misc/jzprint.h
+ecs/ecs.$(O): config.h periph/periph.h mem/mem.h cp1600/cp1600.h
+
+OBJS += ecs/ecs.$(O)

@@ -1,0 +1,55 @@
+##############################################################################
+#
+# Function pointer table, ind_2op format
+#
+##############################################################################
+6
+
+xxx000,  "fn_invalid,"
+xxx001,  "fn_MVO_mr,"    # memory reference through data counter
+xxx010,  "fn_MVI_mr,"
+xxx011,  "fn_ADD_mr,"
+xxx100,  "fn_SUB_mr,"
+xxx101,  "fn_CMP_mr,"
+xxx110,  "fn_AND_mr,"
+xxx111,  "fn_XOR_mr,"
+
+#x1x001,  "fn_MVO_Mr,"    # memory reference through auto-incr data counter
+#x10010,  "fn_MVI_Mr,"
+#x10011,  "fn_ADD_Mr,"
+#x10100,  "fn_SUB_Mr,"
+#x10101,  "fn_CMP_Mr,"
+#x10110,  "fn_AND_Mr,"
+#x10111,  "fn_XOR_Mr,"
+
+01x001,  "fn_MVO_Mr,"    # memory reference through auto-incr data counter
+010010,  "fn_MVI_Mr,"
+010011,  "fn_ADD_Mr,"
+010100,  "fn_SUB_Mr,"
+010101,  "fn_CMP_Mr,"
+010110,  "fn_AND_Mr,"
+010111,  "fn_XOR_Mr,"
+11x001,  "fn_MVO_Nr,"    # memory reference through auto-incr data counter
+110010,  "fn_MVI_Nr,"    #  w/out support for DBD
+110011,  "fn_ADD_Nr,"
+110100,  "fn_SUB_Nr,"
+110101,  "fn_CMP_Nr,"
+110110,  "fn_AND_Nr,"
+110111,  "fn_XOR_Nr,"
+10x001,  "fn_MVO_nr,"    # memory reference through data counter
+10x010,  "fn_MVI_nr,"    #  w/out support for DBD
+10x011,  "fn_ADD_nr,"
+10x100,  "fn_SUB_nr,"
+10x101,  "fn_CMP_nr,"
+10x110,  "fn_AND_nr,"
+10x111,  "fn_XOR_nr,"
+
+x11010,  "fn_MVI_Sr,"    # memory reference through stack pointer
+x11011,  "fn_ADD_Sr,"
+x11100,  "fn_SUB_Sr,"
+x11101,  "fn_CMP_Sr,"
+x11110,  "fn_AND_Sr,"
+x11111,  "fn_XOR_Sr,"
+
+.prolog "/* Auto generated, do not edit */\n\n#include \"cp1600/op_tables.h\"\nconst cp1600_ins_t fn_ind_2op[] =\n{"
+.epilog "};\n"

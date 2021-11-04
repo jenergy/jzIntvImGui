@@ -1,0 +1,64 @@
+
+
+#
+# General input mappings for Intellivision on GP2X
+#
+
+# note:  SHFXY means go to map X when pressed, go to map Y when released
+
+map 0
+
+# joystick, buttons 0-7, counter clockwise from N
+JS0_BTN_00 PD0L_D_N
+JS0_BTN_01 PD0L_D_NW
+JS0_BTN_02 PD0L_D_W
+JS0_BTN_03 PD0L_D_SW
+JS0_BTN_04 PD0L_D_S
+JS0_BTN_05 PD0L_D_SE
+JS0_BTN_06 PD0L_D_E
+JS0_BTN_07 PD0L_D_NE
+
+# action buttons
+JS0_BTN_10 PD0L_D_W     # button L
+JS0_BTN_11 PD0L_D_E     # button R
+JS0_BTN_12 PD0L_A_T     # button A
+JS0_BTN_13 PD0L_A_R     # button B
+JS0_BTN_14 PD0L_A_T     # button Y
+JS0_BTN_15 PD0L_A_L     # button X
+
+JS0_BTN_18 SHF10        # stick press, used for shifting to map 1
+
+# control buttons
+JS0_BTN_08 PD0R_KPE     # start button
+JS0_BTN_09 PD0R_KPC     # select button
+JS0_BTN_16 VOLUP        # volume up
+JS0_BTN_17 VOLDN        # volume down
+
+map 1
+
+JS0_BTN_18 SHF10        # stick press
+JS0_BTN_08 QUIT         # start button
+JS0_BTN_09 RESET        # select button
+
+# default keypad mappings
+JS0_BTN_10 PD0R_KP1     # button L
+JS0_BTN_11 PD0R_KP2     # button R
+JS0_BTN_14 PD0R_KP3     # button Y
+JS0_BTN_12 PD0R_KP4     # button A
+JS0_BTN_13 PD0R_KP5     # button B
+JS0_BTN_15 PD0R_KP6     # button X
+JS0_BTN_17 PD0R_KP7     # volume down
+JS0_BTN_16 PD0R_KP8     # volume up
+
+# repeat direction mappings in this map (probably not completely necessary,
+# but it doesn't hurt)
+JS0_BTN_00 PD0L_D_N
+JS0_BTN_01 PD0L_D_NW
+JS0_BTN_02 PD0L_D_W
+JS0_BTN_03 PD0L_D_SW
+JS0_BTN_04 PD0L_D_S
+JS0_BTN_05 PD0L_D_SE
+JS0_BTN_06 PD0L_D_E
+JS0_BTN_07 PD0L_D_NE
+
+

@@ -1,0 +1,35 @@
+
+Datatypes to serialize:
+-----------------------
+
+flags  (on/off)
+ints (8/16/32)
+strings
+arrays of ints
+
+
+Ramblings:
+----------
+
+Need to do in two passes:  Once to get setup flags, and once after 
+everything registers itself.  cfg first registers the flags it needs 
+to save, calls the deserializer to set them, and then continues init.
+Once all the periphs have been registered, it should run the 
+deserializer again to populate the objects.
+
+Objects that get serialized can be flagged as "mandatory," "optional,"
+or "informative."  The "informative" objects are dumped for the purpose
+of examining the internal state of jzIntv, but are not restored when 
+reloading.  The deserializer checks that all mandatory-flagged objects
+get restored.
+
+Nicety:  jzIntv should come up paused after a deserialization.
+
+Need to be able to serialize/deserialize multiple times in one jzIntv 
+session to allow save/load while playing a game.  For this reason, it
+probably makes sense to flag some objects as "init-only" or "verify
+against init" since we can't rerun cfg once we're live.  (Architecture
+limitation.)  The verify-against-init property should allow us to 
+not load save-states that are incompatible with the configuration we're
+currently running.
+

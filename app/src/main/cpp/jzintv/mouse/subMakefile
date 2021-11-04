@@ -1,0 +1,10 @@
+##############################################################################
+## subMakefile for mouse
+##############################################################################
+
+mouse/mouse_sdl.$(O): mouse/mouse_sdl.c mouse/mouse.h mouse/subMakefile
+mouse/mouse_sdl.$(O): event/event.h $(EVENT_TBL_INC) event/event_plat.h
+mouse/mouse_sdl.$(O): config.h sdl_jzintv.h
+
+OBJS_SDL1 += mouse/mouse_sdl.$(O)
+OBJS_SDL2 += mouse/mouse_sdl.$(O)

@@ -1,0 +1,35 @@
+##############################################################################
+#
+# Branch decoding table
+#
+##############################################################################
+
+
+5, "fn_invalid, /* ERROR */"
+
+# XCCCC  x is external bit, c is condition code
+
+
+# Only "positive" version of branch given.  
+# Negative version specified in "op" word.
+
+1xxxx,  "fn_BEXT_i,"
+00000,  "fn_B_i,"
+00001,  "fn_BC_i,"
+00010,  "fn_BOV_i,"
+00011,  "fn_BPL_i,"
+00100,  "fn_BEQ_i,"
+00101,  "fn_BLT_i,"
+00110,  "fn_BLE_i,"
+00111,  "fn_BUSC_i,"
+01000,  "fn_NOPP_i,"
+01001,  "fn_BNC_i,"
+01010,  "fn_BNOV_i,"
+01011,  "fn_BMI_i,"
+01100,  "fn_BNEQ_i,"
+01101,  "fn_BGE_i,"
+01110,  "fn_BGT_i,"
+01111,  "fn_BESC_i,"
+
+.prolog "/* Auto generated, do not edit */\n\n#include \"cp1600/op_tables.h\"\nconst cp1600_ins_t fn_cond_br[] =\n{"
+.epilog "};\n"

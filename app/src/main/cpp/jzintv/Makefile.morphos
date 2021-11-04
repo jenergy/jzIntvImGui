@@ -1,0 +1,104 @@
+##############################################################################
+## Source-level Makefile for jzintv
+##
+## The whole make process is driven from the top-level Makefile.  In contrast
+## to the (poor) advice given in the Make documentation, I do _not_ call make
+## recursively to build the source of this project.
+##############################################################################
+
+##############################################################################
+## Project directory structure
+##############################################################################
+B=../bin
+L=../lib
+R=../rom
+
+##############################################################################
+## Project-wide build flags
+##############################################################################
+P           = export PATH;
+
+SDL1_CFLAGS := $(shell sdl-config --cflags)
+SDL1_LFLAGS := $(shell sdl-config --libs) 
+
+# Set "X" to be the executable extension, and "O" to be the object extension.
+X = 
+O = o
+
+# Set "RM" to be the remove/delete command
+RM = rm -f 
+
+ WARN    = -Wall -W -Wshadow -Wpointer-arith 				\
+	       -Wbad-function-cast -Wcast-qual -Wc++-compat		\
+		   -Wmissing-declarations -Wmissing-prototypes 		\
+		   -Wstrict-prototypes
+ WARNXX  = -Wall -W -Wshadow -Wpointer-arith -Wcast-qual 
+
+ CC  = $(P) gcc -std=c99
+ CXX = $(P) g++
+#CC  = $(P) gcc-3.4
+#CC  = $(P) /usr/local/bin/gcc -V4.1.1
+#CXX = $(P) /usr/local/bin/g++ 
+#CC  = $(P) icc
+#CC  = $(P) /usr/bin/gcc
+#CXX = $(P) /usr/bin/g++
+
+#DEF_FLAGS += -DDIRECT_INTV2PC
+#DEF_FLAGS += -DNEED_INOUT
+ DEF_FLAGS += -DNO_SETUID
+
+#OPT_FLAGS = -ggdb3
+#OPT_FLAGS = -O
+#OPT_FLAGS = -O2 -ggdb3
+ OPT_FLAGS = -O3 -fomit-frame-pointer -fprefetch-loop-arrays #-DBENCHMARK_STIC
+#OPT_FLAGS = -O2 -pg -ggdb -DLOCAL=
+#OPT_FLAGS = -tpp6 -axMiKW -ip -vec_report3 -opt_report -ansi_alias -restrict -DHAVE_RESTRICT -align -O3 -Ob1 # -ipo # intel icc flags
+
+CFLAGS   = $(OPT_FLAGS) $(WARN)   -I. -I.. $(DEF_FLAGS) $(EXTRA)
+CXXFLAGS = $(OPT_FLAGS) $(WARNXX) -I. -I.. $(DEF_FLAGS) $(EXTRA)
+#LFLAGS   = /usr/local/lib/libgcc_s.so -L../lib 
+LFLAGS   = -L../lib
+
+
+OBJS      = jzintv.o
+PROG_SDL1 = $(B)/jzintv
+TOCLEAN   = $(B)/jzintv core
+
+CFLAGS += $(SDL1_CFLAGS) 
+#LFLAGS += $(SDL1_LFLAGS)
+
+##############################################################################
+## Generic build-rules
+##############################################################################
+
+all: build
+
+$(PROG_SDL1): $(OBJS) $(OBJS_SDL1)
+	$(CC) -o $(PROG) $(OBJS) $(OBJS_SDL1) $(CFLAGS) $(LFLAGS) $(SDL1_LFLAGS)
+
+clean:
+	$(RM) $(OBJS) 
+	$(RM) $(OBJS_SDL1) 
+	$(RM) $(TOCLEAN)
+
+%.o: %.c
+	$(CC) -o $@ $(CFLAGS) -c $<
+
+%.s: %.c
+	$(CC) -fverbose-asm -S -o $@ $(CFLAGS) -c $<
+
+##############################################################################
+## Linux-specific stuff
+##############################################################################
+
+pads/pads_intv2pc.o:
+	$(CC) -O3 -o pads/pads_intv2pc.o $(CFLAGS) -c pads/pads_intv2pc.c
+
+OBJS += pads/pads_cgc_linux.o
+OBJS += pads/pads_intv2pc.o
+
+##############################################################################
+## Makefile.common includes all the subMakefiles and such
+##############################################################################
+include Makefile.common
+build: jzIntv SDK-1600

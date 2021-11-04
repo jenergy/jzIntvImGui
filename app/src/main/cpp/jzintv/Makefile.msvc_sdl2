@@ -1,0 +1,98 @@
+##############################################################################
+## Source-level Makefile for jzintv, targeting Windows
+## with the MSVC compiler.
+## Assumes a cygwin shell environment, for "make" and "rm -f".
+##############################################################################
+
+##############################################################################
+## Project directory structure
+##############################################################################
+B=../bin
+L=../lib
+R=../rom
+X=.exe
+RM=rm -f
+O=obj
+FO=-Fo
+FE=-Fe
+
+# Override static linkage, which isn't needed on Windows.
+SLFLAGS = $(LFLAGS)
+
+##############################################################################
+## Project-wide build flags
+##############################################################################
+
+# Uses SDL2.  (Tested with SDL-2.0.12)
+# Assumes you have copied files from the SDL archive:
+#    SDL's include files into ./SDL2 (e.g., #include "SDL2/SDL.h" works)
+#    SDL's lib/{x86,x64}/SDL2.lib and SDL2main.lib into ../lib (e.g.,
+#    ../lib/SDL2.lib and ../lib/SDL2main.lib exist)
+#    SDL's lib/{x86,x64}/SDL2.dll into ../bin (e.g., ../bin/SDL2.dll exists)
+#    Use the x86 flavor to build 32-bit binaries, x64 for 64-bit.
+
+SDL_CFLAGS= -DUSE_SDL2
+# Shell32.lib is needed to resolve some routines referenced by SDL2main.lib.
+# To see which ones, just try linking without it.
+SDL_LFLAGS= $(L)/SDL2main.lib $(L)/SDL2.lib Shell32.lib
+
+WARN = -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS
+WARNXX = $(WARN)
+
+CC  = cl -nologo
+CXX = cl -nologo
+
+DEF_FLAGS  = -DWIN32
+
+OPT_FLAGS = -O2
+
+CFLAGS   = $(OPT_FLAGS) $(WARN)   -I. -I.. $(DEF_FLAGS) $(EXTRA) $(SDL_CFLAGS)
+CXXFLAGS = $(OPT_FLAGS) $(WARNXX) -I. -I.. $(DEF_FLAGS) -EHsc $(EXTRA) \
+           $(SDL_CFLAGS)
+LFLAGS   = notelemetry.$(O)
+
+OBJS      = jzintv.$(O)
+OBJS_SDL2 =
+SDL_DLL   = $(B)/SDL2.dll
+PROG_SDL2 = $(B)/jzintv$(X)
+PROG_NULL = $(B)/jzintv_null$(X)
+TOCLEAN  += $(PROG_SDL2)
+TOCLEAN  += $(PROG_NULL)
+
+##############################################################################
+## Generic build-rules
+##############################################################################
+
+all: build
+
+$(PROG_SDL2): $(OBJS) $(OBJS_SDL2)
+	$(CXX) $(FE)$(PROG_SDL2) $(OBJS) $(OBJS_SDL2) $(CXXFLAGS) $(LFLAGS) \
+	$(SDL_LFLAGS) -link -SUBSYSTEM:CONSOLE
+
+$(PROG_NULL): $(OBJS) $(OBJS_NULL) svn_revision.$(O)
+	$(CXX) $(FE)$(PROG_NULL) $(OBJS) $(OBJS_NULL) $(CXXFLAGS) $(LFLAGS)
+
+clean:
+	$(RM) $(OBJS)
+	$(RM) *.$(O)
+	$(RM) $(OBJS_SDL2)
+	$(RM) $(OBJS_NULL)
+	$(RM) $(TOCLEAN)
+
+%.$(O): %.c
+	$(CC) $(FO)$@ $(CFLAGS) -c $<
+
+%.$(O): %.cpp
+	$(CXX) $(FO)$@ $(CXXFLAGS) -c $<
+
+##############################################################################
+## Win32 specific stuff
+##############################################################################
+
+OBJS += pads/pads_cgc_win32.$(O) pads/pads_intv2pc.$(O)
+
+##############################################################################
+## Makefile.common includes all the subMakefiles and such
+##############################################################################
+include Makefile.common
+build: jzIntv SDK-1600

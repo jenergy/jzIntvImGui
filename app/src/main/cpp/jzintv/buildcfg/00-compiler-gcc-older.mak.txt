@@ -1,0 +1,69 @@
+##############################################################################
+## Older GCC configuration.
+##
+## This should work for GCC versions back to somewhere in the late 4.x
+## series, such as what the older Raspbian on the Ultimate Flashback uses.
+##
+## If the -std flags below don't work, try -std=c99 and std=c++1y instead.
+##############################################################################
+
+# Compile with "LTO=" to make a one-off compile w/out link time optimization.
+LTO ?= -flto
+
+# GCC-specific sanitizer flags.
+# Add USE_SANI=1 to enable a sanitizer build.  Recommend 'make clean' first.
+#
+# Older GCC may not provide these, so be prepared to comment some out if
+# you compile with USE_SANI=1.
+ifeq ($(USE_SANI),1)
+ SANI  = -fsanitize=address
+ SANI += -fsanitize-address-use-after-scope
+ SANI += -fsanitize=leak
+ SANI += -fsanitize=undefined
+ # Sanitizers don't seem quite compatible with LTO right now, at least on Mac.
+ LTO =
+ # Also disable overall static linking (other than static GCC libs).
+ SLFLAGS = $(LFLAGS)
+endif
+
+CC       = gcc -std=gnu11
+CXX      = g++ -std=gnu++14
+CXXFLAGS = -fvisibility=hidden
+
+CFLAGS   += -fno-common -ffunction-sections -fdata-sections
+CXXFLAGS += -fno-common -ffunction-sections -fdata-sections
+
+# For GCC, statically link in its compiler-specific libraries so we are
+# more portable among Macs.
+LFLAGS   += -static-libstdc++ -static-libgcc
+
+# Aggressive optimization flags, unless you compile with DEBUG=1.
+ifeq ($(DEBUG),1)
+OPT_FLAGS = -ggdb3
+else
+OPT_FLAGS  = -O3 -fomit-frame-pointer -fprefetch-loop-arrays 
+OPT_FLAGS += -fstrict-aliasing -funswitch-loops
+endif
+
+# Used when building the SDL1 plat/SDL1_osx_main.m file on Macintosh only.
+WARN_M  = -Wall -W -Wextra -Wshadow -Wpointer-arith
+WARN_M += -Wbad-function-cast -Wcast-qual -Wc++-compat
+WARN_M += -Wmissing-declarations -Wmissing-prototypes
+WARN_M += -Wstrict-prototypes -Wuninitialized
+WARN_M += -Werror
+
+# Used when compiling C files.
+WARN    = -Wall -W -Wextra -Wshadow -Wpointer-arith
+WARN   += -Wbad-function-cast -Wcast-qual -Wc++-compat
+WARN   += -Wmissing-declarations -Wmissing-prototypes
+WARN   += -Wstrict-prototypes -Wstrict-aliasing
+WARN   += -Werror
+
+# Used when compiling C++ files.
+WARNXX  = -Wall -W -Wextra -Wshadow -Wpointer-arith
+WARNXX += -Wcast-qual -Wsequence-point -Wc++11-compat
+WARNXX += -Wstrict-aliasing -Wlogical-op -Wold-style-cast
+WARNXX += -Werror
+
+# Only used on MacOS.
+MACOS_VERSION_MIN = 10.6.0

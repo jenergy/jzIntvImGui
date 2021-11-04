@@ -1,0 +1,34 @@
+##############################################################################
+## subMakefile for icart
+##############################################################################
+
+icart/icart.$(O): icart/icart.c icart/icart.h icart/subMakefile periph/periph.h
+icart/icart.$(O): config.h cp1600/cp1600.h cp1600/req_q.h lzoe/lzoe.h
+icart/icart.$(O): metadata/metadata.h file/file.h misc/types.h
+
+icart/icartrom.$(O): icart/icartrom.c icart/icartrom.h misc/crc16.h
+icart/icartrom.$(O): icart/subMakefile config.h icart/icarttag.h
+icart/icartrom.$(O): metadata/metadata.h metadata/icarttag_metadata.h
+icart/icartrom.$(O): misc/types.h
+
+icart/icartbin.$(O): icart/icartbin.c icart/icartbin.h misc/crc16.h
+icart/icartbin.$(O): icart/subMakefile config.h icart/icartrom.h
+icart/icartbin.$(O): bincfg/bincfg.h misc/types.h metadata/metadata.h
+icart/icartbin.$(O): metadata/cfgvar_metadata.h misc/types.h misc/printer.h
+
+icart/icartfile.$(O): icart/icartrom.h icart/icartbin.h lzoe/lzoe.h
+icart/icartfile.$(O): icart/icartfile.h icart/subMakefile config.h misc/types.h
+
+icart/icarttag.$(O): config.h icart/icarttag.h icart/icartrom.h
+icart/icarttag.$(O): metadata/metadata.h misc/crc16.h misc/types.h
+
+icart/icarttag_printer.$(O): config.h icart/icarttag.h misc/types.h
+icart/icarttag_authors.$(O): icart/icarttag.h 
+
+OBJS += icart/icart.$(O)
+OBJS += icart/icartrom.$(O)
+OBJS += icart/icartbin.$(O)
+OBJS += icart/icartfile.$(O)
+OBJS += icart/icarttag.$(O)
+OBJS += icart/icarttag_authors.$(O)
+OBJS += icart/icarttag_printer.$(O)

@@ -1,0 +1,15 @@
+##############################################################################
+## subMakefile for stic
+##############################################################################
+
+stic/stic.$(O): stic/stic.c stic/stic.h stic/stic_timings.h stic/subMakefile
+stic/stic.$(O): periph/periph.h gfx/gfx.h gfx/palette.h debug/debug_if.h
+stic/stic.$(O): cp1600/cp1600.h cp1600/req_q.h gif/gif_enc.h file/file.h
+stic/stic.$(O): demo/demo.h
+
+OBJS += stic/stic.$(O) 
+
+#stic/stic_dump: stic/stic_dump.$(O) stic/stic_dump.c stic/subMakefile config.h
+#	$(CC) $(FO)stic/stic_dump stic/stic_dump.$(O)
+#PROGS += stic/stic_dump
+#TOCLEAN += stic/stic_dump stic/stic_dump.$(O)

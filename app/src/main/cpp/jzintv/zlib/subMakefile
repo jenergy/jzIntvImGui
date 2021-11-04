@@ -1,0 +1,18 @@
+##############################################################################
+## subMakefile for zlib
+##############################################################################
+
+zlib/deflate.$(O): zlib/zconf.h zlib/zlib.h zlib/zutil.h
+zlib/trees.$(O):   zlib/zconf.h zlib/zlib.h zlib/zutil.h
+zlib/adler32.$(O): zlib/zconf.h zlib/zlib.h zlib/zutil.h
+zlib/zutil.$(O):   zlib/zconf.h zlib/zlib.h zlib/zutil.h
+
+zlib/deflate.$(O): zlib/deflate.h
+zlib/trees.$(O):   zlib/deflate.h zlib/trees.h
+
+ZLIB_OBJS = zlib/deflate.$(O) zlib/adler32.$(O) zlib/trees.$(O) zlib/zutil.$(O)
+ZLIB_HDRS = zlib/zconf.h zlib/zlib.h zlib/zutil.h
+
+TOCLEAN += $(ZLIB_OBJS)
+OBJS    += $(ZLIB_OBJS)
+

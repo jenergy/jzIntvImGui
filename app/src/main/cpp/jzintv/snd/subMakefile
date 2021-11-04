@@ -1,0 +1,12 @@
+##############################################################################
+## subMakefile for snd
+##############################################################################
+
+snd/snd_null.$(O): snd/snd_null.c snd/snd.h snd/subMakefile config.h
+snd/snd_null.$(O): avi/avi.h periph/periph.h
+snd/snd_sdl.$(O): snd/snd_sdl.c snd/snd.h snd/subMakefile config.h sdl_jzintv.h
+snd/snd_sdl.$(O): avi/avi.h periph/periph.h
+
+OBJS_NULL += snd/snd_null.$(O)
+OBJS_SDL1 += snd/snd_sdl.$(O)
+OBJS_SDL2 += snd/snd_sdl.$(O)

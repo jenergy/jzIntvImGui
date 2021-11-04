@@ -1,0 +1,40 @@
+##############################################################################
+## subMakefile for mem
+##############################################################################
+
+joy/joy_null.$(O): joy/joy_null.c joy/joy.h
+joy/joy_null.$(O): config.h joy/subMakefile
+
+joy/joy_sdl.$(O): joy/joy_sdl.c joy/joy.h joy/joy_sdl.h 
+joy/joy_sdl.$(O): event/event.h $(EVENT_TBL_INC) event/event_plat.h
+joy/joy_sdl.$(O): cp1600/cp1600.h cp1600/emu_link.h periph/periph.h
+joy/joy_sdl.$(O): config.h sdl_jzintv.h joy/subMakefile
+
+joy/joy_gp2x.$(O): joy/joy_gp2x.c joy/joy.h joy/joy_gp2x.h 
+joy/joy_gp2x.$(O): event/event.h $(EVENT_TBL_INC) event/event_plat.h
+joy/joy_gp2x.$(O): cp1600/cp1600.h cp1600/emu_link.h periph/periph.h
+joy/joy_gp2x.$(O): config.h sdl_jzintv.h joy/subMakefile
+
+OBJS_NULL += joy/joy_null.$(O)
+OBJS_SDL1 += joy/joy_sdl.$(O)
+OBJS_SDL2 += joy/joy_sdl.$(O)
+
+.SUFFIXES: .rom .asm .mac
+
+PROGS   += $(R)/joy_diag.rom
+TOCLEAN += $(R)/joy_diag.rom joy/joy_diag.lst joy/joy_diag.sym
+
+$(R)/joy_diag.rom:  ../examples/library/print.asm
+$(R)/joy_diag.rom:  ../examples/library/prnum16.asm
+$(R)/joy_diag.rom:  ../examples/library/prnum32.asm
+$(R)/joy_diag.rom:  ../examples/library/fillmem.asm
+$(R)/joy_diag.rom:  ../examples/library/hexdisp.asm
+$(R)/joy_diag.rom:  ../examples/library/gimini.asm
+$(R)/joy_diag.rom:  ../examples/macro/stic.mac
+$(R)/joy_diag.rom:  ../examples/macro/util.mac
+$(R)/joy_diag.rom:  ../examples/macro/print.mac
+$(R)/joy_diag.rom:  ../examples/macro/gfx.mac
+
+$(R)/joy_diag.rom:	$(B)/as1600$(X) joy/joy_diag.asm 
+	$(B)/as1600$(X) -o $(R)/joy_diag.rom -i../examples/ -l joy/joy_diag.lst -s joy/joy_diag.sym joy/joy_diag.asm
+

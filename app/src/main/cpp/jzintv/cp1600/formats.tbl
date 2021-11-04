@@ -1,0 +1,22 @@
+##############################################################################
+#
+# CP-1610 basic opcode formats
+#
+# 10-bit wide lookup table.
+#
+##############################################################################
+10,         "-1,    /* ERROR */" # all entries should be filled. 
+1ooommmddd, "fmt_ind_2op,       /* Indirect  -> Register 2-op arith */"
+1ooo000ddd, "fmt_dir_2op,       /* Direct    -> Register 2-op arith */"
+1ooo111ddd, "fmt_imm_2op,       /* Immediate -> Register 2-op arith */"
+1000zxcccc, "fmt_cond_br,       /* Conditional branch.              */"
+0ooosssddd, "fmt_reg_2op,       /* Register  -> Register 2-op arith */"
+0001ooomrr, "fmt_rot_1op,       /* Rotate/Shift Register 1-op       */"
+0000oooddd, "fmt_reg_1op,       /* Combined Src/Dst Register 1-op   */"
+00001100oo, "fmt_gswd,          /* GSWD -- Get Status WorD insn.    */"
+00001101oo, "fmt_nop_sin,       /* NOP, SIN instructions            */"
+00000000oo, "fmt_impl_1op_a,    /* Implied 1-op arithmetic  (a)     */"
+00000001oo, "fmt_impl_1op_b,    /* Implied 1-op arithmetic  (b)     */"
+0000000100, "fmt_jump,          /* Absolute jump instructions       */"
+.prolog "/* Auto generated, do not edit */\n\n#include \"cp1600/op_tables.h\"\nconst uint8_t dec_format[] =\n{"
+.epilog "};\n"

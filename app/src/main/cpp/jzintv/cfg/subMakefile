@@ -1,0 +1,30 @@
+##############################################################################
+## subMakefile for cfg
+##############################################################################
+
+cfg/cfg.$(O): cfg/cfg.c cfg/cfg.h cfg/subMakefile cfg/mapping.h
+cfg/cfg.$(O): config.h periph/periph.h cp1600/cp1600.h mem/mem.h file/file.h
+cfg/cfg.$(O): pads/pads.h debug/debug_.h cp1600/op_decode.h cp1600/op_exec.h
+cfg/cfg.$(O): stic/stic.h speed/speed.h gfx/gfx.h gfx/palette.h snd/snd.h
+cfg/cfg.$(O): ay8910/ay8910.h ivoice/ivoice.h cp1600/req_q.h bincfg/legacy.h
+cfg/cfg.$(O): bincfg/bincfg.h misc/types.h ecs/ecs.h
+cfg/cfg.$(O): demo/demo.h joy/joy.h cp1600/emu_link.h event/event.h 
+cfg/cfg.$(O): serializer/serializer.h pads/pads_cgc.h jlp/jlp.h avi/avi.h
+cfg/cfg.$(O): plat/plat.h plat/plat_lib.h debug/source.h file/elfi.h 
+cfg/cfg.$(O): locutus/locutus_adapt.h cheat/cheat.h
+cfg/cfg.$(O): metadata/metadata.h metadata/print_metadata.h
+
+cfg/mapping.$(O): cfg/cfg.h cfg/subMakefile cfg/mapping.h
+cfg/mapping.$(O): config.h periph/periph.h cp1600/cp1600.h mem/mem.h file/file.h
+cfg/mapping.$(O): pads/pads.h debug/debug_.h cp1600/op_decode.h cp1600/op_exec.h
+cfg/mapping.$(O): stic/stic.h speed/speed.h gfx/gfx.h gfx/palette.h snd/snd.h
+cfg/mapping.$(O): ay8910/ay8910.h ivoice/ivoice.h cp1600/req_q.h bincfg/legacy.h
+cfg/mapping.$(O): bincfg/bincfg.h misc/types.h ecs/ecs.h
+cfg/mapping.$(O): demo/demo.h joy/joy.h cp1600/emu_link.h event/event.h 
+cfg/mapping.$(O): jlp/jlp.h avi/avi.h cheat/cheat.h
+cfg/mapping.$(O): locutus/locutus_adapt.h metadata/metadata.h
+
+cfg/usage.$(O): config.h cfg/cfg.h
+
+OBJS += cfg/cfg.$(O) cfg/usage.$(O) cfg/mapping.$(O)
+

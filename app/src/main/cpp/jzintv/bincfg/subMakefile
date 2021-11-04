@@ -1,0 +1,58 @@
+##############################################################################
+## subMakefile for bincfg
+##############################################################################
+
+## object files in this module
+BCOBJ  = bincfg/bincfg.$(O) bincfg/bincfg_grmr.tab.$(O) bincfg/bincfg_lex.$(O) 
+
+## generated C/H files from bison, flex.
+BCGEN  = bincfg/bincfg_grmr.tab.c bincfg/bincfg_grmr.tab.h
+BCGEN += bincfg/bincfg_grmr.output bincfg/bincfg_lex.c 
+
+bincfg/legacy.$(O):     bincfg/legacy.h mem/mem.h bincfg/bincfg_grmr.tab.h
+bincfg/legacy.$(O):     bincfg/bincfg.h periph/periph.h config.h misc/types.h
+bincfg/legacy.$(O):	    cp1600/cp1600.h file/file.h lzoe/lzoe.h
+bincfg/legacy.$(O):	    metadata/metadata.h
+
+bincfg/bincfg.$(O):     config.h plat/plat_lib.h misc/ll.h file/file.h
+bincfg/bincfg.$(O):     bincfg/bincfg.h lzoe/lzoe.h misc/types.h
+bincfg/bincfg.$(O):     bincfg/bincfg_grmr.tab.h
+bincfg/bincfg.$(O):     bincfg/bincfg_lex.h 
+
+bincfg/bincfg_lex.$(O): config.h plat/plat_lib.h misc/ll.h
+bincfg/bincfg_lex.$(O): bincfg/bincfg.h lzoe/lzoe.h misc/types.h
+bincfg/bincfg_lex.$(O): bincfg/bincfg_grmr.tab.h
+bincfg/bincfg_lex.$(O): bincfg/bincfg_lex.h
+
+bincfg/bincfg_grmr.tab.$(O): config.h plat/plat_lib.h misc/ll.h
+bincfg/bincfg_grmr.tab.$(O): bincfg/bincfg.h misc/types.h
+bincfg/bincfg_grmr.tab.$(O): bincfg/bincfg_lex.h bincfg/bincfg_grmr.tab.h
+
+## special rules for generating grammar parser and lexer engines
+
+bincfg/bincfg_grmr.tab.$(O): bincfg/bincfg_grmr.tab.h bincfg/bincfg_grmr.tab.c
+	$(CC) $(FO)bincfg/bincfg_grmr.tab.$(O) $(CFLAGS) -c bincfg/bincfg_grmr.tab.c
+
+bincfg/bincfg_lex.$(O): bincfg/bincfg_lex.c bincfg/bincfg_lex.h
+
+.DUMMY:	bincfg_regen
+
+bincfg_regen:
+	bison --defines --verbose --token-table --name-prefix="bc_" --file-prefix="bincfg/bincfg_grmr"  bincfg/bincfg_grmr_real.y
+	flex -obincfg/bincfg_lex.c bincfg/bincfg_lex_real.l
+
+#bincfg/bincfg_lex.$(O): bincfg/bincfg_lex.c
+#	$(CC) $(FO)bincfg/bincfg_lex.$(O) $(CFLAGS) -c bincfg/bincfg_lex.c
+
+## bc_test is a simple test program for parsing config files in isolation.
+## It will be useful for diagnostic purposes.
+$(B)/bc_test$(X): $(BCOBJ) bincfg/bc_test.$(O) misc/ll.$(O) $(FILEOBJ)
+	$(CC) $(FE)$(B)/bc_test$(X) $(CFLAGS) $(BCOBJ) bincfg/bc_test.$(O) misc/ll.$(O) $(FILEOBJ) $(SLFLAGS)
+
+#PROGS   += $(B)/bc_test$(X)
+#TOCLEAN += $(B)/bc_test$(X)
+PROGS   += 
+TOCLEAN += $(BCOBJ) bincfg/bc_test.$(O) bincfg/legacy.$(O)
+GENCLN  += $(BCGEN)
+GENTRG  += bincfg_regen
+OBJS    += $(BCOBJ) bincfg/legacy.$(O)

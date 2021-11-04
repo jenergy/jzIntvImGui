@@ -1,0 +1,7 @@
+# These are the architecture flags I use for the jzIntv Linux binary release.
+#
+# See buildcfg/10-opt-for-native.mak.txt for options you might want when
+# building for yourself.
+ifneq ($(DEBUG),1)
+  OPT_FLAGS += -msse2 -mtune=generic
+endif

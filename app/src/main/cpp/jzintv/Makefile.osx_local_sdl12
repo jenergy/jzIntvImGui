@@ -1,0 +1,168 @@
+##############################################################################
+## Source-level Makefile for jzintv
+##
+## This Makefile expects to build jzIntv with a locally installed version
+## of the SDL-1.2 development branch.  This is required to fix breakage in
+## recent versions of MacOS X.
+##
+## The Makefile expects to find SDL-1.2 in ../sdl12/.  If you install it
+## elsewhere, modify the SDL variable below as necessary.
+##############################################################################
+
+##############################################################################
+## Project directory structure
+##############################################################################
+B=../bin
+L=../lib
+R=../rom
+SDL=../sdl12
+
+##############################################################################
+## Project-wide build flags
+##############################################################################
+P           = export PATH;
+
+SVN_REV := $(shell (svn info -R || :) | grep "Last Changed Rev:" | cut -d' ' -f4 | sort -n | tail -1)
+SVN_DTY := $(shell echo $$( (svn status || :) | grep -v '^?' | wc -l ) )
+
+SDL1_CFLAGS := $(shell $(SDL)/bin/sdl-config --cflags)
+SDL1_LFLAGS := $(shell $(SDL)/bin/sdl-config --static-libs)
+
+# Set "X" to be the executable extension, and "O" to be the object extension.
+X =        
+O = o
+
+# Set "RM" to be the remove/delete command
+RM = rm -f 
+
+# WARN_M used for building the .m file
+ WARN_M  = -Wall -W -Wextra -Wshadow -Wpointer-arith
+ WARN_M += -Wbad-function-cast -Wcast-qual -Wc++-compat
+ WARN_M += -Wmissing-declarations -Wmissing-prototypes
+ WARN_M += -Wstrict-prototypes
+ WARN_M += -Werror
+
+ WARN    = -Wall -W -Wextra -Wshadow -Wpointer-arith
+ WARN   += -Wbad-function-cast -Wcast-qual -Wc++-compat
+ WARN   += -Wmissing-declarations -Wmissing-prototypes
+ WARN   += -Wstrict-prototypes -Wmaybe-uninitialized
+ WARN   += -Werror -Wstrict-aliasing -Wlogical-op
+
+ WARNXX  = -Wall -W -Wextra -Wshadow -Wpointer-arith
+ WARNXX += -Wcast-qual -Wsequence-point
+ WARNXX += -Wc++11-compat -Wc++14-compat -Wc++1z-compat
+ WARNXX += -Werror -Wstrict-aliasing -Wlogical-op
+ WARNXX += -Wold-style-cast
+
+#LTO = -flto=4
+ CC  = $(P) /usr/local/gcc-9.2/bin/gcc-9.2.0 $(LTO)
+ CXX = $(P) /usr/local/gcc-9.2/bin/g++-9.2.0 $(LTO) -std=c++14 -fvisibility=hidden
+#CC  = $(P) gcc
+#CXX = $(P) g++ -std=c++14 -fvisibility=hidden
+
+LIBCXX = -static-libstdc++ -static-libgcc
+
+DEF_FLAGS =  -DPLAT_MACOS
+
+#OPT_FLAGS = -ggdb 
+#OPT_FLAGS = -O
+#OPT_FLAGS = -O2 -ggdb
+ OPT_FLAGS = -O3 -fomit-frame-pointer -msse3 -fstrict-aliasing
+#OPT_FLAGS = -O3 -msse3 -pg
+#OPT_FLAGS =  -pg -ggdb -DLOCAL=
+
+ARCH      = -arch x86_64
+CFLAGS    = $(ARCH) -mmacosx-version-min=10.6 #-L../lib
+CFLAGS   += $(OPT_FLAGS)    -I. -I.. $(DEF_FLAGS) $(EXTRA)
+CXXFLAGS  = $(ARCH) -mmacosx-version-min=10.6 #-L../lib
+CXXFLAGS += $(OPT_FLAGS)  -I. -I.. $(DEF_FLAGS) $(EXTRA) 
+LFLAGS    = -L$(SDL)/lib
+
+SDLMAIN_CC = $(P) gcc $(ARCH)
+
+#Note: SDL_Main.$(O) is *not* included, as it needs to be handled specially.
+# -- Tues Aug. 31 JJT
+OBJS      = jzintv.$(O) 
+PROG_SDL1 = $(B)/jzintv$(X)
+PROG_NULL = $(B)/jzintv_batch$(X)
+TOCLEAN  += $(PROG_SDL1) $(PROG_NULL) core
+TOCLEAN  += libjzintv_common.a libjzintv_sdl.a libjzintv_null.a
+TOCLEAN  += SDLMain.$(O) jzintv_fromcommon$(X)
+OBJS_SDL += pads/pads_cgc_linux.$(O)
+
+CFLAGS   += $(SDL1_CFLAGS) 
+CXXFLAGS += $(SDL1_CFLAGS) 
+#Reserving SDL to the FINAL link --Sat Aug. 7 JJT
+#LFLAGS += $(SDL1_LFLAGS)
+
+# Add C++ static libraries to all link targets
+LFLAGS += $(LIBCXX)
+
+# XXX: Make this work on Mojave through a terrible hack.
+LFLAGS += -Wl,-platform_version,macos,10.6,10.13
+
+# Override static linkage, which is not supported on Mac.
+SLFLAGS = $(LFLAGS)
+
+# Sanitizer
+#SANI  = -fsanitize=address
+#SANI += -fsanitize-address-use-after-scope
+#SANI += -fsanitize=leak
+#SANI += -fsanitize=undefined
+
+CFLAGS_NOSANI := $(CFLAGS) $(WARN_M)
+CFLAGS        += $(SANI) $(WARN)
+CXXFLAGS      += $(SANI) $(WARNXX)
+
+##############################################################################
+## Generic build-rules
+##############################################################################
+
+all: build
+
+# libjzintv_common.a libjzintv_sdl.a libjzintv_null.a
+
+##############################################################################
+## Makefile.common includes all the subMakefiles and such
+##############################################################################
+ include Makefile.common
+
+ 
+$(PROG_SDL1): $(OBJS) $(OBJS_SDL1) SDLMain.$(O)
+	$(CXX) -o $(PROG_SDL1) $(OBJS) $(OBJS_SDL1) SDLMain.$(O) $(CFLAGS) $(LFLAGS) $(SDL1_LFLAGS)
+
+$(PROG_NULL): $(OBJS) $(OBJS_NULL)
+	$(CXX) -o $(PROG_NULL) $(OBJS) $(OBJS_NULL) $(CFLAGS) $(LFLAGS)
+
+#Library for use with the OS X GUI project.
+libjzintv_common.a : $(OBJS)
+	libtool -o libjzintv_common.a $(OBJS)
+
+libjzintv_sdl.a : $(OBJS_SDL1)
+	libtool -o libjzintv_sdl.a $(OBJS_SDL1)
+
+libjzintv_null.a : $(OBJS_NULL)
+	libtool -o libjzintv_null.a $(OBJS_NULL)
+
+#Test program for libjzintv_common.a . If everything is OK, this program should
+#behave exactly like jzintv.
+jzintv_fromcommon : libjzintv_common.a libjzintv_sdl.a SDLMain.$(O)
+	$(CC) -o jzintv_fromcommon $(CFLAGS) SDLMain.$(O) $(LFLAGS) $(SDL1_LFLAGS) -L. -ljzintv_common -ljzintv_sdl
+
+clean:
+	$(RM) $(OBJS) 
+	$(RM) $(OBJS_SDL1) 
+	$(RM) $(OBJS_NULL) 
+	$(RM) $(TOCLEAN)
+
+SDLMain.$(O): SDLMain.m SDLMain.h
+	$(SDLMAIN_CC) -o $@ $(CFLAGS_NOSANI) -fno-objc-arc $(SDL_PORT_SYN_FLAGS) -Wno-error -c $<
+	
+%.$(O): %.c
+	$(CC) -o $@  $(CFLAGS) -c $<
+
+%.$(O): %.cpp
+	$(CXX) -o $@  $(CXXFLAGS) -c $<
+
+build: jzIntv SDK-1600
+

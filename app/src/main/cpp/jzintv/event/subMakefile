@@ -1,0 +1,53 @@
+##############################################################################
+## subMakefile for event
+##############################################################################
+
+.SUFFIXES: .rom .asm .mac .inc
+
+EVENT_TBL_INC := event/event_tbl.h event/event_tbl.inc
+
+event/event.$(O): event/event.h $(EVENT_TBL_INC) event/event_plat.h
+event/event.$(O): cp1600/cp1600.h cp1600/emu_link.h periph/periph.h
+event/event.$(O): config.h sdl_jzintv.h event/subMakefile
+
+event/event_null.$(O): $(EVENT_TBL_INC) event/event_plat.h
+event/event_null.$(O): config.h event/subMakefile
+
+event/event_sdl.$(O): $(EVENT_TBL_INC) event/event_plat.h event/event_sdl_pvt.h
+event/event_sdl.$(O): joy/joy.h joy/joy_sdl.h mouse/mouse.h
+event/event_sdl.$(O): config.h sdl_jzintv.h event/subMakefile
+
+event/event_sdl1.$(O): $(EVENT_TBL_INC) event/event_plat.h event/event_sdl_pvt.h
+event/event_sdl1.$(O): config.h sdl_jzintv.h event/subMakefile
+
+event/event_sdl2.$(O): $(EVENT_TBL_INC) event/event_plat.h event/event_sdl_pvt.h
+event/event_sdl2.$(O): config.h sdl_jzintv.h event/subMakefile
+
+event/event_tbl.$(O): event/event.h $(EVENT_TBL_INC)
+event/event_tbl.$(O): config.h periph/periph.h event/subMakefile
+
+OBJS += event/event.$(O)
+OBJS += event/event_tbl.$(O)
+
+OBJS_NULL += event/event_null.$(O)
+OBJS_SDL1 += event/event_sdl.$(O)
+OBJS_SDL1 += event/event_sdl1.$(O)
+OBJS_SDL2 += event/event_sdl.$(O)
+OBJS_SDL2 += event/event_sdl2.$(O)
+
+PROGS   += $(R)/event_diag.rom
+TOCLEAN += $(R)/event_diag.rom event/event_diag.lst
+
+$(R)/event_diag.rom:  ../examples/library/print.asm
+$(R)/event_diag.rom:  ../examples/library/prnum16.asm
+$(R)/event_diag.rom:  ../examples/library/prnum32.asm
+$(R)/event_diag.rom:  ../examples/library/fillmem.asm
+$(R)/event_diag.rom:  ../examples/library/hexdisp.asm
+$(R)/event_diag.rom:  ../examples/library/gimini.asm
+$(R)/event_diag.rom:  ../examples/macro/stic.mac
+$(R)/event_diag.rom:  ../examples/macro/util.mac
+$(R)/event_diag.rom:  ../examples/macro/print.mac
+$(R)/event_diag.rom:  ../examples/macro/gfx.mac
+
+$(R)/event_diag.rom:	$(B)/as1600$(X) event/event_diag.asm 
+	$(B)/as1600$(X) -o $(R)/event_diag.rom -i../examples/ -l event/event_diag.lst event/event_diag.asm

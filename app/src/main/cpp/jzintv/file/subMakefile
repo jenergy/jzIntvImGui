@@ -1,0 +1,14 @@
+##############################################################################
+## subMakefile for file
+##############################################################################
+
+file/file.$(O): file/file.c file/file.h file/subMakefile config.h
+file/file.$(O): plat/plat_lib.h
+
+file/elfi.$(O): file/elfi.c file/elfi.h file/subMakefile config.h
+file/elfi.$(O): periph/periph.h cp1600/cp1600.h cp1600/emu_link.h
+
+FILEOBJ += file/file.$(O)
+
+OBJS += file/file.$(O)
+OBJS += file/elfi.$(O)

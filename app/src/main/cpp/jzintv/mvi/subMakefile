@@ -1,0 +1,11 @@
+##############################################################################
+## subMakefile for mvi
+##############################################################################
+
+mvi/mvi.$(O): mvi/mvi.c mvi/mvi.h mvi/subMakefile
+mvi/mvi.$(O): config.h file/file.h 
+mvi/mvi.$(O): minilzo/minilzo.h minilzo/lzodefs.h minilzo/lzoconf.h
+
+OBJS += mvi/mvi.$(O)
+
+$(OBJS): mvi/mvi.h

@@ -1,0 +1,9 @@
+##############################################################################
+## subMakefile for avi
+##############################################################################
+
+avi/avi.$(O): avi/avi.c avi/avi.h avi/subMakefile gfx/palette.h
+avi/avi.$(O): config.h plat/plat_lib.h file/file.h 
+avi/avi.$(O): $(ZLIB_HDRS)
+
+OBJS += avi/avi.$(O)

@@ -1,0 +1,27 @@
+##############################################################################
+## subMakefile for metadata
+##############################################################################
+
+metadata/metadata.$(O): metadata/metadata.h config.h metadata/subMakefile
+metadata/metadata.$(O): misc/types.h
+
+metadata/cfgvar_metadata.$(O): config.h misc/ll.h misc/types.h
+metadata/cfgvar_metadata.$(O): metadata/metadata.h metadata/cfgvar_metadata.h
+
+metadata/icarttag_metadata.$(O): config.h misc/ll.h icart/icarttag.h
+metadata/icarttag_metadata.$(O): metadata/metadata.h icart/icartrom.h
+metadata/icarttag_metadata.$(O): metadata/icarttag_metadata.h misc/types.h
+
+metadata/print_metadata.$(O): metadata/metadata.h config.h metadata/subMakefile
+metadata/print_metadata.$(O): misc/types.h misc/jzprint.h
+
+METADATA_OBJS  = metadata/metadata.$(O)
+METADATA_OBJS += metadata/cfgvar_metadata.$(O)
+METADATA_OBJS += metadata/icarttag_metadata.$(O)
+
+METADATA_HDRS  = metadata/metadata.h
+METADATA_HDRS += metadata/cfgvar_metadata.h
+METADATA_HDRS += metadata/icarttag_metadata.h
+METADATA_HDRS += misc/types.h
+
+OBJS += $(METADATA_OBJS) metadata/print_metadata.$(O)

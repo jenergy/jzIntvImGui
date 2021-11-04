@@ -1,0 +1,100 @@
+##############################################################################
+## Source-level Makefile for jzintv
+##
+## The whole make process is driven from the top-level Makefile.  In contrast
+## to the (poor) advice given in the Make documentation, I do _not_ call make
+## recursively to build the source of this project.
+##############################################################################
+
+##############################################################################
+## Project directory structure
+##############################################################################
+B=../bin
+L=../lib
+R=../rom
+X=.exe
+O=o
+RM=rm -f
+
+##############################################################################
+## Project-wide build flags
+##############################################################################
+
+# Set to 0 or comment out to disable GNU Readline support.
+GNU_READLINE ?= 1
+
+SVN_REV := $(shell (svn info -R || :) | grep "Last Changed Rev:" | cut -d' ' -f4 | sort -n | tail -1)
+SVN_DTY := $(shell echo $$( (svn status || :) | grep -v '^?' | wc -l ) )
+
+SDL2_CFLAGS    := $(shell sdl2-config --cflags)
+
+SDL2_LFLAGS_IN := $(shell sdl2-config --static-libs)
+SDL2_LFLAGS    := $(subst -mwindows,-mconsole,$(SDL2_LFLAGS_IN))
+
+ WARN    = -Wall -W -Wshadow -Wpointer-arith
+ WARN   += -Wbad-function-cast -Wcast-qual -Werror
+ WARNXX  = -Wall -W -Wshadow -Wpointer-arith -Wcast-qual -Werror
+
+ CC  = gcc -std=gnu11
+ CXX = g++ -std=c++14 -U__STRICT_ANSI__ -fvisibility=hidden
+
+ DEF_FLAGS  = -DWIN32 -DDOSTMP -DDIRECT_INTV2PC 
+
+#OPT_FLAGS = -O
+#OPT_FLAGS = -O  -ggdb 
+ OPT_FLAGS = -O3 -fomit-frame-pointer -msse2
+#OPT_FLAGS = -O2 -pg -ggdb 
+
+OPT_FLAGS += -ffunction-sections -flto
+
+CFLAGS   = $(OPT_FLAGS) $(WARN)   -I. -I.. $(DEF_FLAGS) $(EXTRA)
+CXXFLAGS = $(OPT_FLAGS) $(WARNXX) -I. -I.. $(DEF_FLAGS) $(EXTRA)
+LFLAGS   = -L../lib -static-libgcc -static-libstdc++ -static
+
+CFLAGS  += -DUSE_SDL2
+
+OBJS      = jzintv.$(O)
+PROG_SDL2 = $(B)/jzintv$(X)
+PROG_NULL = $(B)/jzintv_batch$(X)
+TOCLEAN  += $(PROG_SDL2)
+TOCLEAN  += $(PROG_NULL)
+TOCLEAN  += core
+
+ifeq ($(GNU_READLINE),1)
+RL_CFLAGS = -DUSE_GNU_READLINE
+RL_LFLAGS = -lreadline -ltermcap
+endif
+
+##############################################################################
+## Generic build-rules
+##############################################################################
+
+all: build
+
+$(PROG_SDL2): $(OBJS) $(OBJS_SDL2)
+	$(CXX) -o $(PROG_SDL2) $(OBJS) $(OBJS_SDL2) $(CFLAGS) $(SDL2_CFLAGS) $(LFLAGS) $(SDL2_LFLAGS) $(RL_LFLAGS)
+
+$(PROG_NULL): $(OBJS) $(OBJS_NULL)
+	$(CXX) -o $(PROG_NULL) $(OBJS) $(OBJS_NULL) $(CFLAGS) $(LFLAGS) $(RL_LFLAGS)
+
+clean:
+	$(RM) $(OBJS)
+	$(RM) $(OBJS_SDL2)
+	$(RM) $(OBJS_NULL)
+	$(RM) $(TOCLEAN)
+
+%.$(O): %.c
+	$(CC) -o $@ $(CFLAGS) -c $<
+
+##############################################################################
+## Win32 specific stuff
+##############################################################################
+
+OBJS += pads/pads_cgc_win32.$(O) pads/pads_intv2pc.$(O)
+#OBJS_SDL2 += plat/SDL_win32_main.$(O)
+
+##############################################################################
+## Makefile.common includes all the subMakefiles and such
+##############################################################################
+include Makefile.common
+build: jzIntv SDK-1600

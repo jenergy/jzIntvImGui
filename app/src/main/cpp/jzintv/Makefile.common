@@ -1,0 +1,125 @@
+##############################################################################
+## Common Makefile for all targets
+##############################################################################
+
+# Note: there must be at least one char of whitespace at the end of the
+#       next two lines.  The $(FO) and $(FE) variables are there to
+#       accommodate MSVC and its -Fo/-Fe flags that don't want the whitespace.
+FO ?= -o 
+FE ?= -o 
+
+# *NIX-like systems use 'o' by default. MSVC and some others want 'obj'.
+O ?= o
+
+SVN_REV ?= 0
+SVN_DTY ?= 0
+CFLAGS   += -DJZINTV_VERSION_MAJOR=0x01 -DJZINTV_VERSION_MINOR=0x00
+CFLAGS   += -DJZINTV_SVN_REV=$(SVN_REV) -DJZINTV_SVN_DTY=$(SVN_DTY)
+CXXFLAGS += -DJZINTV_VERSION_MAJOR=0x01 -DJZINTV_VERSION_MINOR=0x00
+CXXFLAGS += -DJZINTV_SVN_REV=$(SVN_REV) -DJZINTV_SVN_DTY=$(SVN_DTY)
+SLFLAGS ?= -static $(LFLAGS)
+
+##############################################################################
+## Include module-specific Makefiles.  
+##############################################################################
+ include cfg/subMakefile        # Machine configuration
+ include misc/subMakefile       # Miscellaneous support routines.
+ include plat/subMakefile       # Platform-specific initialization
+ include event/subMakefile      # Event subsystem
+ include gfx/subMakefile        # Graphics support routines
+ include snd/subMakefile        # Sound support routines
+ include mvi/subMakefile        # Movie encode/decode routines.
+ include debug/subMakefile      # Debugger
+ include periph/subMakefile     # Peripheral bus
+ include cp1600/subMakefile     # CP-1600 CPU simulator
+ include mem/subMakefile        # Memories (RAMs and ROMs)
+ include icart/subMakefile      # Intellicart emulation
+ include icart/subMakefile2     # Intellicart emulation
+ include stic/subMakefile       # Standard Television Interface Circuit
+ include pads/subMakefile       # Game pad input
+ include ay8910/subMakefile     # AY-891x Sound Chip
+ include ecs/subMakefile        # Entertainment Computer System (ECS)
+ include ivoice/subMakefile     # Intellivoice Support
+ include speed/subMakefile      # Speed controller object
+ include minilzo/subMakefile    # LZO compression (for IMV)
+ include file/subMakefile       # File I/O routines
+ include lzoe/subMakefile       # LZO-compressed embedded files support
+ include metadata/subMakefile   # Game metadata
+ include bincfg/subMakefile     # .BIN+.CFG parser 
+ include *util/subMakefile      # Utility programs
+ include asm/subMakefile        # Assembler (as1600)
+ include imasm/subMakefile      # Macro support for assembler
+ include dasm/subMakefile       # Disassembler (dasm1600)
+ include gif/subMakefile        # GIF support routines
+ include demo/subMakefile       # Demo file recording code
+ include joy/subMakefile        # Joystick decoder
+ include mouse/subMakefile      # Mouse decoder
+ include name/subMakefile       # Name database
+ include serializer/subMakefile # Serializer (save/load)
+ include jlp/subMakefile        # Jean-Luc Project extra features support
+ include scale/subMakefile      # Scale2x/3x/4x
+ include locutus/subMakefile    # Locutus / LUIGI support
+ include zlib/subMakefile       # deflate compression for AVI support
+ include avi/subMakefile        # AVI support
+ include cheat/subMakefile      # Cheat support
+
+.PHONY: all clean regen cleangen jzIntv SDK-1600 build force nonexistent-target
+
+.SUFFIXES: .cpp .$(O)
+
+OBJS += svn_revision.$(O)
+
+svn_revision.$(O): force
+	$(CC) -c $(CFLAGS) $(FO)svn_revision.$(O) svn_revision.c
+
+PROG_SDL1 ?= nonexistent-target
+PROG_SDL2 ?= nonexistent-target
+PROG_NULL ?= nonexistent-target
+
+ifneq ($(PROG_SDL1),nonexistent-target)
+$(PROG_SDL1): $(OBJS) $(OBJS_SDL1)
+endif
+
+ifneq ($(PROG_SDL2),nonexistent-target)
+$(PROG_SDL2): $(OBJS) $(OBJS_SDL2)
+endif
+
+ifneq ($(PROG_NULL),nonexistent-target)
+$(PROG_NULL): $(OBJS) $(OBJS_NULL)
+endif
+
+all: build
+
+jzIntv: $(PROG_SDL1) $(PROG_SDL2) $(PROG_NULL)
+
+SDK-1600: $(PROGS)
+
+regen: $(GENTRG)
+
+cleangen: 
+	$(RM) $(GENCLN)
+
+nonexistent-target:
+
+.cpp.$(O) :
+	$(CXX) -c $(CXXFLAGS) $(FO)$@ $<
+
+.c.s:
+	$(CC) -S -c $(CFLAGS) $(FO)$@ $<
+
+jzintv.$(O): config.h periph/periph.h cp1600/cp1600.h mem/mem.h ecs/ecs.h
+jzintv.$(O): pads/pads.h debug/debug_.h cp1600/op_decode.h cp1600/op_exec.h
+jzintv.$(O): stic/stic.h speed/speed.h gfx/gfx.h snd/snd.h ay8910/ay8910.h
+jzintv.$(O): plat/plat.h plat/plat_lib.h event/event.h
+jzintv.$(O): file/file.h ivoice/ivoice.h icart/icart.h cp1600/req_q.h
+jzintv.$(O): bincfg/legacy.h bincfg/bincfg.h pads/pads_intv2pc.h
+jzintv.$(O): demo/demo.h cfg/cfg.h cfg/mapping.h misc/jzprint.h avi/avi.h
+jzintv.$(O): name/name.h misc/file_crc32.h jlp/jlp.h locutus/locutus_adapt.h
+jzintv.$(O): cheat/cheat.h debug/debug_if.h
+
+$(OBJS): misc/jzprint.h config.h plat/plat_lib.h
+$(OBJS_SDL1): misc/jzprint.h config.h plat/plat_lib.h
+$(OBJS_SDL2): misc/jzprint.h config.h plat/plat_lib.h
+$(OBJS_NULL): misc/jzprint.h config.h plat/plat_lib.h
+
+# vim: noexpandtab:noai:sw=4:ts=4:

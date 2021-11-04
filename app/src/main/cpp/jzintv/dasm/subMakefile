@@ -1,0 +1,38 @@
+##############################################################################
+## subMakefile for dasm1600
+##############################################################################
+
+DASMSRC  = dasm/dasm1600.c dasm/dasm1600o.c dasm/dis1600.c dasm/exec_interp.c
+DASMOBJ  = dasm/dasm1600.$(O) dasm/dasm1600o.$(O) dasm/dis1600.$(O)
+DASMOBJ += dasm/exec_interp.$(O)
+
+DIS1600OBJ  = dasm/dis1600.$(O) dasm/exec_interp.$(O)
+DIS1600OBJ += icart/icartrom.$(O) icart/icartbin.$(O) icart/icartfile.$(O)
+DIS1600OBJ += icart/icarttag.$(O) icart/icarttag_authors.$(O)
+DIS1600OBJ += util/symtab.$(O) misc/avl.$(O) misc/crc16.$(O) misc/printer.$(O)
+DIS1600OBJ += $(BCOBJ) $(FILEOBJ) misc/ll.$(O) $(METADATA_OBJS) misc/types.$(O)
+DIS1600OBJ += plat/plat_gen.$(O) plat/gnu_getopt.$(O)
+
+$(B)/dis1600$(X): $(DIS1600OBJ)
+	$(CC) $(FE)$(B)/dis1600$(X) $(CFLAGS) $(DIS1600OBJ) $(SLFLAGS)
+
+
+$(B)/dasm1600$(X): dasm/dasm1600.$(O) plat/plat_gen.$(O)
+	$(CC) $(FE)$(B)/dasm1600$(X) $(CFLAGS) dasm/dasm1600.$(O) plat/plat_gen.$(O) $(SLFLAGS)
+
+
+
+dasm/dis1600.$(O): 	   dasm/dis1600.h dasm/exec_interp.h util/symtab.h config.h
+dasm/dis1600.$(O):     icart/icartrom.h icart/icartbin.h icart/icartfile.h
+dasm/exec_interp.$(O): dasm/dis1600.h dasm/exec_interp.h util/symtab.h
+dasm/exec_interp.$(O): icart/icartrom.h icart/icartbin.h icart/icartfile.h
+
+TOCLEAN += $(B)/dis1600$(X) $(B)/dasm1600$(X) $(DASMOBJ) 
+PROGS   += $(B)/dis1600$(X) $(B)/dasm1600$(X)
+
+# Uncomment the following lines to re-enable building dasm1600o
+
+#$(B)/dasm1600o$(X): dasm/dasm1600o.$(O) plat/plat_gen.$(O)
+#	$(CC) $(FE)$(B)/dasm1600o$(X) $(CFLAGS) dasm/dasm1600o.$(O) plat/plat_gen.$(O) $(SLFLAGS)
+#TOCLEAN += $(B)/dasm1600o$(X)
+#PROGS   += $(B)/dasm1600o$(X)

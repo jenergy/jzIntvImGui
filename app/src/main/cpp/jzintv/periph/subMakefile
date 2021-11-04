@@ -1,0 +1,8 @@
+##############################################################################
+## subMakefile for periph
+##############################################################################
+
+periph/periph.$(O): periph/periph.c periph/periph.h periph/subMakefile config.h
+
+OBJS += periph/periph.$(O)
+

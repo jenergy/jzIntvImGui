@@ -1,0 +1,11 @@
+# These are the architecture flags I use for the jzIntv R-Pi binary release.
+#
+# See buildcfg/10-opt-for-native.mak.txt for options you might want when
+# building for yourself.
+ifneq ($(DEBUG),1)
+  OPT_FLAGS += -mtune=generic
+endif
+
+# Don't compile Readline support into the release version, as it's not
+# installed under Raspbian by default, apparently.
+GNU_READLINE = 0

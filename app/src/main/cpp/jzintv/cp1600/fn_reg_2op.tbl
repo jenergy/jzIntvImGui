@@ -1,0 +1,28 @@
+##############################################################################
+#
+# Function pointer table, reg_2op format
+#
+##############################################################################
+5,  "fn_invalid,"
+
+xx010,    "fn_MOV_rr,"
+xx011,    "fn_ADD_rr,"
+xx100,    "fn_SUB_rr,"
+xx101,    "fn_CMP_rr,"
+xx110,    "fn_AND_rr,"
+xx111,    "fn_XOR_rr,"
+01010,    "fn_MOV_rp,"
+01011,    "fn_ADD_rp,"
+01100,    "fn_SUB_rp,"
+01101,    "fn_CMP_rp,"
+01110,    "fn_AND_rp,"
+01111,    "fn_XOR_rp,"
+1x010,    "fn_MOV_pr,"
+1x011,    "fn_ADD_pr,"
+1x100,    "fn_SUB_pr,"
+1x101,    "fn_CMP_pr,"
+1x110,    "fn_AND_pr,"
+1x111,    "fn_XOR_pr,"
+
+.prolog "/* Auto generated, do not edit */\n\n#include \"cp1600/op_tables.h\"\nconst cp1600_ins_t fn_reg_2op[] =\n{"
+.epilog "};\n"

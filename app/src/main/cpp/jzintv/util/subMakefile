@@ -1,0 +1,212 @@
+##############################################################################
+## subMakefile for utilities
+##############################################################################
+
+#$(B)/test_cart$(X): util/test_cart.$(O)  util/cart.$(O) plat/plat_gen.$(O) 
+#	 $(CC) -O3 -finline $(FE)$(B)/test_cart$(X) $(CFLAGS) util/test_cart.$(O) util/cart.$(O) plat/plat_gen.$(O)
+ 
+# $(B)/test_hcif$(X): util/test_hcif.c
+#	$(CC) -O3 -finline $(FE)$(B)/test_hcif$(X) $(CFLAGS) util/test_hcif.c $(SLFLAGS)
+
+UTIL_COMMON_OBJS += icart/icartbin.$(O)
+UTIL_COMMON_OBJS += icart/icartfile.$(O)
+UTIL_COMMON_OBJS += icart/icartrom.$(O)
+UTIL_COMMON_OBJS += icart/icarttag.$(O)
+UTIL_COMMON_OBJS += icart/icarttag_printer.$(O)
+UTIL_COMMON_OBJS += icart/icarttag_authors.$(O)
+UTIL_COMMON_OBJS += misc/crc16.$(O)
+UTIL_COMMON_OBJS += misc/crc32.$(O)
+UTIL_COMMON_OBJS += misc/file_crc32.$(O)
+UTIL_COMMON_OBJS += misc/ll.$(O)
+UTIL_COMMON_OBJS += misc/types.$(O)
+UTIL_COMMON_OBJS += misc/printer.$(O)
+UTIL_COMMON_OBJS += plat/gnu_getopt.$(O)
+UTIL_COMMON_OBJS += plat/plat_gen.$(O)
+UTIL_COMMON_OBJS += $(BCOBJ)
+UTIL_COMMON_OBJS += $(FILEOBJ)
+UTIL_COMMON_OBJS += $(METADATA_OBJS)
+
+$(B)/show_grom$(X): util/show_grom.$(O)
+	$(CC) $(FE)$(B)/show_grom$(X) $(CFLAGS) util/show_grom.$(O) $(SLFLAGS)
+
+$(B)/tohex$(X): util/tohex.$(O)
+	$(CC) $(FE)$(B)/tohex$(X) $(CFLAGS) util/tohex.$(O) $(SLFLAGS)
+
+$(B)/tobit$(X): util/tobit.$(O)
+	$(CC) $(FE)$(B)/tobit$(X) $(CFLAGS) util/tobit.$(O) $(SLFLAGS)
+
+$(B)/tobit_f$(X): util/tobit_f.$(O)
+	$(CC) $(FE)$(B)/tobit_f$(X) $(CFLAGS) util/tobit_f.$(O) $(SLFLAGS)
+
+$(B)/tobit_r$(X): util/tobit_r.$(O)
+	$(CC) $(FE)$(B)/tobit_r$(X) $(CFLAGS) util/tobit_r.$(O) $(SLFLAGS)
+
+$(B)/fromhex$(X): util/fromhex.$(O)
+	$(CC) $(FE)$(B)/fromhex$(X) $(CFLAGS) util/fromhex.$(O) $(SLFLAGS)
+
+$(B)/frombit$(X): util/frombit.$(O)
+	$(CC) $(FE)$(B)/frombit$(X) $(CFLAGS) util/frombit.$(O) $(SLFLAGS)
+
+$(B)/frombit_r$(X): util/frombit_r.$(O)
+	$(CC) $(FE)$(B)/frombit_r$(X) $(CFLAGS) util/frombit_r.$(O) $(SLFLAGS)
+
+$(B)/dasm0256$(X): util/dasm0256.$(O) misc/avl.$(O) util/symtab.$(O) util/bitmem.$(O)
+	$(CC) $(FE)$(B)/dasm0256$(X) $(CFLAGS) misc/avl.$(O) util/symtab.$(O) util/bitmem.$(O) util/dasm0256.$(O) $(SLFLAGS)
+
+$(B)/rom_merge$(X): util/rom_merge.$(O) $(UTIL_COMMON_OBJS)
+	$(CC) $(FE)$(B)/rom_merge$(X) $(CFLAGS) util/rom_merge.$(O) $(UTIL_COMMON_OBJS) $(SLFLAGS)
+
+$(B)/split_rom$(X): util/split_rom.$(O) $(UTIL_COMMON_OBJS)
+	$(CC) $(FE)$(B)/split_rom$(X) $(CFLAGS) util/split_rom.$(O) $(UTIL_COMMON_OBJS) $(SLFLAGS)
+
+$(B)/rom2bin$(X): util/rom2bin.$(O) $(UTIL_COMMON_OBJS)
+	$(CC) $(FE)$(B)/rom2bin$(X) $(CFLAGS) util/rom2bin.$(O) $(UTIL_COMMON_OBJS) $(SLFLAGS)
+
+$(B)/rom_metadata$(X): util/rom_metadata.$(O) $(UTIL_COMMON_OBJS)
+	$(CC) $(FE)$(B)/rom_metadata$(X) $(CFLAGS) util/rom_metadata.$(O) $(UTIL_COMMON_OBJS) $(SLFLAGS)
+
+$(B)/bin2rom$(X): util/bin2rom.$(O) $(UTIL_COMMON_OBJS)
+	$(CC) $(FE)$(B)/bin2rom$(X) $(CFLAGS) util/bin2rom.$(O) $(UTIL_COMMON_OBJS) $(SLFLAGS)
+
+$(B)/bin2luigi$(X): util/bin2luigi.$(O) locutus/bin_to_loc.$(O) locutus/locutus.$(O) locutus/luigi.$(O) locutus/locutus_types.$(O) $(UTIL_COMMON_OBJS)
+	$(CXX) $(FE)$(B)/bin2luigi$(X) $(CFLAGS) util/bin2luigi.$(O) locutus/bin_to_loc.$(O) locutus/locutus.$(O) locutus/luigi.$(O) locutus/locutus_types.$(O) $(UTIL_COMMON_OBJS) $(SLFLAGS)
+
+$(B)/luigi2bin$(X): util/luigi2bin.$(O) locutus/loc_to_bin.$(O) locutus/locutus.$(O) locutus/luigi.$(O) locutus/locutus_types.$(O) $(UTIL_COMMON_OBJS)
+	$(CXX) $(FE)$(B)/luigi2bin$(X) $(CFLAGS) util/luigi2bin.$(O) locutus/loc_to_bin.$(O) locutus/locutus.$(O) locutus/luigi.$(O) locutus/locutus_types.$(O) $(UTIL_COMMON_OBJS) $(SLFLAGS)
+
+$(B)/rom2luigi$(X): util/rom2luigi.$(O) locutus/rom_to_loc.$(O) locutus/locutus.$(O) locutus/luigi.$(O) locutus/locutus_types.$(O) $(UTIL_COMMON_OBJS)
+	$(CXX) $(FE)$(B)/rom2luigi$(X) $(CFLAGS) util/rom2luigi.$(O) locutus/rom_to_loc.$(O) locutus/locutus.$(O) locutus/luigi.$(O) locutus/locutus_types.$(O) $(UTIL_COMMON_OBJS) $(SLFLAGS)
+
+$(B)/gms2rom$(X): util/gms2rom.$(O) $(UTIL_COMMON_OBJS)
+	$(CC) $(FE)$(B)/gms2rom$(X) $(CFLAGS) util/gms2rom.$(O) $(UTIL_COMMON_OBJS) $(SLFLAGS)
+
+$(B)/imvtogif$(X): util/imvtogif.$(O) mvi/mvi.$(O) gif/gif_enc.$(O) gif/lzw_enc.$(O) minilzo/minilzo.$(O) gif/gif_enc.h
+	$(CC) $(FE)$(B)/imvtogif$(X) $(CFLAGS) util/imvtogif.$(O) mvi/mvi.$(O) gif/gif_enc.$(O) gif/lzw_enc.$(O) minilzo/minilzo.$(O) $(SLFLAGS)
+
+$(B)/imvtoppm$(X): util/imvtoppm.$(O) mvi/mvi.$(O) minilzo/minilzo.$(O)
+	$(CC) $(FE)$(B)/imvtoppm$(X) $(CFLAGS) util/imvtoppm.$(O) mvi/mvi.$(O) minilzo/minilzo.$(O) $(SLFLAGS)
+
+$(B)/rman$(X): util/rman.$(O) gif/gif_enc.$(O) gif/lzw_enc.$(O)
+	$(CC) $(FE)$(B)/rman$(X) $(CFLAGS) util/rman.$(O) gif/gif_enc.$(O) gif/lzw_enc.$(O) $(SLFLAGS)
+
+$(B)/crc32$(X): util/crc32.$(O) misc/crc32.$(O) misc/file_crc32.$(O) $(FILEOBJ) plat/plat_gen.$(O)
+	$(CC) $(FE)$(B)/crc32$(X) $(CFLAGS) util/crc32.$(O) misc/crc32.$(O) misc/file_crc32.$(O) $(FILEOBJ) plat/plat_gen.$(O) $(SLFLAGS)
+
+INTVNAME_OBJ  = util/intvname.$(O) name/name.$(O) name/name_list.$(O) 
+INTVNAME_OBJ += locutus/locutus.$(O) locutus/luigi.$(O) locutus/locutus_adapt.$(O)
+INTVNAME_OBJ += locutus/locutus_types.$(O)
+INTVNAME_OBJ += $(UTIL_COMMON_OBJS)
+
+$(INTVNAME_OBJ): $(METADATA_HDRS)
+
+$(B)/intvname$(X): $(INTVNAME_OBJ)
+	$(CXX) $(FE)$(B)/intvname$(X) $(CFLAGS) $(INTVNAME_OBJ) $(SLFLAGS)
+
+
+#$(B)/ec_load$(X): util/ec_load.$(O) util/ecscable.$(O) icart/icartrom.$(O) misc/crc16.$(O) plat/plat_gen.$(O)
+#	$(CC) $(FE)$(B)/ec_load$(X) $(CFLAGS) util/ec_load.$(O) util/ecscable.$(O) icart/icartrom.$(O) misc/crc16.$(O) plat/plat_gen.$(O)
+
+#$(B/ec_watch$(X): util/ec_watch.$(O) util/ecscable.$(O)  plat/plat_gen.$(O)
+#	$(CC) $(FE)$(B)/ec_watch$(X) $(CFLAGS) util/ec_watch.$(O) util/ecscable.$(O)  plat/plat_gen.$(O)
+
+#$(B)/ec_dump$(X): util/ec_dump.$(O) util/ecscable.$(O)  plat/plat_gen.$(O)
+#	$(CC) $(FE)$(B)/ec_dump$(X) $(CFLAGS) util/ec_dump.$(O) util/ecscable.$(O)  plat/plat_gen.$(O)
+
+#$(B)/ec_test$(X): util/ec_test.$(O) util/ecscable.$(O)  plat/plat_gen.$(O)
+#	$(CC) $(FE)$(B)/ec_test$(X) $(CFLAGS) util/ec_test.$(O) util/ecscable.$(O)  plat/plat_gen.$(O)
+
+$(B)/cgc_update$(X): util/cgc_update.$(O)
+	$(CC) $(FE)$(B)/cgc_update$(X) $(CFLAGS) util/cgc_update.$(O) $(SLFLAGS)
+
+#util/test_cart.$(O):   util/cart.h config.h plat/plat_lib.h
+util/test_hcif.$(O):   config.h plat/plat_lib.h
+#util/ec_test.$(O):     util/ecscable.h config.h plat/plat_lib.h
+#util/ec_dump.$(O):     util/ecscable.h config.h plat/plat_lib.h
+#util/ec_watch.$(O):    util/ecscable.h config.h plat/plat_lib.h
+#util/ec_load.$(O):     util/ecscable.h config.h plat/plat_lib.h
+util/dasm0256.$(O):    config.h misc/avl.h util/symtab.h util/bitmem.h
+util/symtab.$(O):      config.h misc/avl.h util/symtab.h
+util/bitmem.$(O):      config.h util/bitmem.h
+util/rom2bin.$(O):     config.h misc/crc16.h icart/icartrom.h icart/icartbin.h
+util/rom2bin.$(O):     $(METADATA_HDRS) icart/icarttag.h
+util/rom_metadata.$(O): config.h misc/crc16.h icart/icartrom.h icart/icartbin.h
+util/rom_metadata.$(O): $(METADATA_HDRS) icart/icarttag.h
+util/bin2rom.$(O):     config.h misc/crc16.h file/file.h icart/icarttag.h
+util/bin2rom.$(O):     $(METADATA_HDRS) icart/icartrom.h icart/icartbin.h
+util/gms2rom.$(O):     config.h misc/crc16.h icart/icartrom.h
+util/rom_merge.$(O):   config.h misc/crc16.h icart/icartrom.h icart/icartbin.h
+util/rom_merge.$(O):   $(METADATA_HDRS)
+util/crc32.$(O):		config.h misc/crc32.h misc/file_crc32.h
+util/intvname.$(O):    config.h misc/crc16.h icart/icartrom.h icart/icartbin.h
+util/intvname.$(O):    misc/crc32.h misc/file_crc32.h file/file.h lzoe/lzoe.h
+util/intvname.$(O):    name/name.h misc/types.h $(METADATA_HDRS)
+
+util/bin2luigi.$(O):   config.h lzoe/lzoe.h file/file.h $(METADATA_HDRS)
+util/bin2luigi.$(O):   locutus/locutus.hpp locutus/luigi.hpp
+util/bin2luigi.$(O):   locutus/bin_to_loc.hpp locutus/locutus_types.hpp
+
+util/luigi2bin.$(O):   config.h file/file.h $(METADATA_HDRS)
+util/luigi2bin.$(O):   locutus/locutus.hpp locutus/luigi.hpp 
+util/luigi2bin.$(O):   locutus/loc_to_bin.hpp locutus/locutus_types.hpp
+
+util/rom2luigi.$(O):   config.h lzoe/lzoe.h file/file.h icart/icartrom.h
+util/rom2luigi.$(O):   locutus/locutus.hpp locutus/luigi.hpp
+util/rom2luigi.$(O):   locutus/locutus_types.hpp $(METADATA_HDRS)
+util/rom2luigi.$(O):   locutus/rom_to_loc.hpp misc/file_crc32.h
+
+util/split_rom.$(O):   config.h icart/icartrom.h icart/icartbin.h icart/icartfile.h
+
+# force a couple files to build w/ optimization for inb()/outb() macros
+#util/cart.$(O):        util/cart.h config.h plat/plat_lib.h
+#	$(CC) -O3 -finline $(FO)util/cart.$(O) $(CFLAGS) -c util/cart.c
+#util/ecscable.$(O):    util/ecscable.h config.h
+#	$(CC) -O3 -finline $(FO)util/ecscable.$(O) $(CFLAGS) -c util/ecscable.c
+
+PROGS += $(B)/show_grom$(X) $(B)/crc32$(X)
+PROGS += $(B)/tobit$(X) $(B)/tobit_r$(X) $(B)/frombit$(X) $(B)/frombit_r$(X)
+PROGS += $(B)/tohex$(X) $(B)/fromhex$(X) $(B)/bin2rom$(X)
+PROGS += $(B)/dasm0256$(X) $(B)/tobit_f$(X) $(B)/rom2bin$(X) $(B)/gms2rom$(X)
+#PROGS += $(B)/ec_load$(X) $(B)/ec_watch$(X) $(B)/ec_dump$(X) $(B)/ec_test$(X)
+#PROGS += $(B)/test_hcif$(X) $(B)/test_cart$(X)
+PROGS += $(B)/rom_merge$(X)
+PROGS += $(B)/split_rom$(X)
+PROGS += $(B)/imvtogif$(X) $(B)/imvtoppm$(X) 
+PROGS += $(B)/cgc_update$(X)
+PROGS += $(B)/bin2luigi$(X)
+PROGS += $(B)/luigi2bin$(X)
+PROGS += $(B)/rom2luigi$(X)
+PROGS += $(B)/intvname$(X)
+PROGS += $(B)/rom_metadata$(X)
+
+TOCLEAN += util/test_hcif.$(O) $(PROGS) util/cgc_update.$(O)
+TOCLEAN += util/dasm0256.$(O) util/symtab.$(O) util/bitmem.$(O) 
+TOCLEAN += util/tohex.$(O) util/tobit.$(O) util/tobit_r.$(O)
+TOCLEAN += util/show_grom.$(O) util/rom_metadata.$(O)
+TOCLEAN += util/fromhex.$(O) util/frombit.$(O) util/frombit_r.$(O) 
+TOCLEAN += util/tobit_f.$(O) util/rom2bin.$(O) util/gms2rom.$(O)
+TOCLEAN += util/bin2rom.$(O) util/crc32.$(O) util/imvtoppm.$(O)
+TOCLEAN += util/ec_dump.$(O) util/test_cart.$(O) util/cart.$(O)
+TOCLEAN += util/ecscable.$(O) util/ec_load.$(O) util/ec_watch.$(O)
+TOCLEAN += util/ec_test.$(O) util/rman.$(O)
+TOCLEAN += util/rom_merge.$(O) util/split_rom.$(O) util/imvtogif.$(O)
+TOCLEAN += util/bin2luigi.$(O) util/rom2luigi.$(O) util/luigi2bin.$(O)
+TOCLEAN += $(INTVNAME_OBJ)
+
+.SUFFIXES: .rom .asm .mac
+
+PROGS   += $(R)/emu_ver.rom
+TOCLEAN += $(R)/emu_ver.rom util/emu_ver.lst
+
+$(R)/emu_ver.rom:  ../examples/library/print.asm
+$(R)/emu_ver.rom:  ../examples/library/prnum16.asm
+$(R)/emu_ver.rom:  ../examples/library/prnum32.asm
+$(R)/emu_ver.rom:  ../examples/library/fillmem.asm
+$(R)/emu_ver.rom:  ../examples/library/hexdisp.asm
+$(R)/emu_ver.rom:  ../examples/library/gimini.asm
+$(R)/emu_ver.rom:  ../examples/macro/stic.mac
+$(R)/emu_ver.rom:  ../examples/macro/util.mac
+$(R)/emu_ver.rom:  ../examples/macro/print.mac
+$(R)/emu_ver.rom:  ../examples/macro/gfx.mac
+
+$(R)/emu_ver.rom:	$(B)/as1600$(X) util/emu_ver.asm 
+	$(B)/as1600$(X) -o $(R)/emu_ver.rom -i../examples/ -l util/emu_ver.lst util/emu_ver.asm

@@ -1,0 +1,78 @@
+##############################################################################
+## subMakefile for cp1600
+##############################################################################
+
+
+T=cp1600/tbl
+
+CP1600_TABLES=	\
+		$(T)/fn_cond_br.c		\
+		$(T)/fn_dir_2op.c		\
+		$(T)/fn_imm_2op.c		\
+		$(T)/fn_impl_1op_a.c	\
+		$(T)/fn_impl_1op_b.c	\
+		$(T)/fn_ind_2op.c		\
+		$(T)/fn_reg_1op.c		\
+		$(T)/fn_reg_2op.c		\
+		$(T)/fn_rot_1op.c		\
+		$(T)/formats.c
+		
+CP1600_TBLOBJ=	\
+		$(T)/fn_cond_br.$(O)	\
+		$(T)/fn_dir_2op.$(O)	\
+		$(T)/fn_imm_2op.$(O)	\
+		$(T)/fn_impl_1op_a.$(O)	\
+		$(T)/fn_impl_1op_b.$(O)	\
+		$(T)/fn_ind_2op.$(O)	\
+		$(T)/fn_reg_1op.$(O)	\
+		$(T)/fn_reg_2op.$(O)	\
+		$(T)/fn_rot_1op.$(O)	\
+		$(T)/formats.$(O)
+
+
+#$(B)/mk_tbl: cp1600/mk_tbl.$(O)
+#	$(CC) $(FE)$(B)/mk_tbl$(X) $(CFLAGS) cp1600/mk_tbl.$(O) $(LFLAGS)
+#
+#cp1600/tbl/%.c: cp1600/%.tbl
+#	$(B)/mk_tbl $< $@
+
+cp1600/cp1600.$(O): cp1600/cp1600.c cp1600/cp1600.h 
+cp1600/cp1600.$(O): cp1600/subMakefile config.h plat/plat_lib.h
+cp1600/cp1600.$(O): cp1600/cp1600.h cp1600/op_exec.h cp1600/op_decode.h
+cp1600/cp1600.$(O): periph/periph.h cp1600/req_q.h debug/debug_.h
+
+cp1600/op_decode.$(O): cp1600/op_decode.c cp1600/op_decode.h $(CP1600_TABLES)
+cp1600/op_decode.$(O): cp1600/subMakefile config.h cp1600/op_tables.h
+cp1600/op_decode.$(O): cp1600/cp1600.h cp1600/op_exec.h cp1600/op_decode.h 
+cp1600/op_decode.$(O): periph/periph.h cp1600/req_q.h plat/plat_lib.h
+cp1600/op_decode.$(O): cp1600/op_exec_ext.h
+
+cp1600/op_exec.$(O): cp1600/op_exec.c cp1600/op_exec.h
+cp1600/op_exec.$(O): cp1600/subMakefile config.h plat/plat_lib.h
+cp1600/op_exec.$(O): cp1600/cp1600.h cp1600/op_exec.h cp1600/op_decode.h
+cp1600/op_exec.$(O): periph/periph.h cp1600/req_q.h cp1600/emu_link.h
+
+cp1600/op_exec_ext.$(O): cp1600/op_exec_ext.c cp1600/op_exec_ext.h
+cp1600/op_exec_ext.$(O): cp1600/subMakefile config.h plat/plat_lib.h
+cp1600/op_exec_ext.$(O): cp1600/cp1600.h cp1600/op_exec_ext.h
+cp1600/op_exec_ext.$(O): periph/periph.h cp1600/op_decode.h
+
+cp1600/op_tables.h: config.h cp1600/req_q.h plat/plat_lib.h
+cp1600/op_tables.h: periph/periph.h cp1600/cp1600.h cp1600/op_exec.h
+
+cp1600/emu_link.$(O): cp1600/cp1600.h cp1600/emu_link.h
+cp1600/emu_link.$(O): config.h periph/periph.h
+
+cp1600/req_q.$(O): cp1600/req_q.h config.h
+
+$(CP1600_TABLES): periph/periph.h cp1600/cp1600.h cp1600/op_exec.h
+$(CP1600_TABLES): cp1600/op_tables.h config.h 
+
+#$(CP1600_TABLES): $(B)/mk_tbl$(X) 
+#$(CP1600_TBLOBJ): $(CP1600_TABLES)
+
+OBJS += cp1600/cp1600.$(O) cp1600/op_decode.$(O) cp1600/op_exec.$(O)
+OBJS += cp1600/emu_link.$(O) cp1600/op_exec_ext.$(O) cp1600/req_q.$(O)
+OBJS += $(CP1600_TBLOBJ)
+
+#TOCLEAN += cp1600/mk_tbl.$(O) $(CP1600_TBLOBJ) $(B)/mk_tbl$(X)

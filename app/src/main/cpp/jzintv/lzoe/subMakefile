@@ -1,0 +1,19 @@
+##############################################################################
+## subMakefile for utilities
+##############################################################################
+
+$(B)/lzo_embed$(X): lzoe/lzo_embed.c $(FILEOBJ) plat/plat_gen.$(O)
+	$(CC) $(FE)$(B)/lzo_embed$(X) $(CFLAGS) lzoe/lzo_embed.c $(FILEOBJ) plat/plat_gen.$(O) $(SLFLAGS)
+
+lzoe/lzo_embed.$(O): lzoe/lzoe.h file/file.h minilzo/minilzo.h
+lzoe/lzoe.$(O):      lzoe/lzoe.h file/file.h minilzo/minilzo.h
+
+LZPROGS += $(B)/lzo_embed$(X)
+TOCLEAN += lzoe/lzo_embed.$(O) $(LZPROGS) 
+PROGS   += $(LZPROGS)
+
+OBJS    += lzoe/lzoe.$(O)
+
+FILEOBJ += lzoe/lzoe.$(O)
+
+.SUFFIXES: .rom .asm .mac

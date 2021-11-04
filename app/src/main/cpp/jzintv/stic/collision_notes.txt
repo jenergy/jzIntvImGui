@@ -1,0 +1,26 @@
+
+ -- MOB-to-Border collisions are evaluated on a 1-pixel-wide border around
+    the visible screen.
+      -- Horizontal and vertical delay are taken into account.
+
+      -- The top and bottom edges are 1 *double-res* row thick.  This only
+         matters for MOBs that have double vertical resolution.
+
+      -- MOBs w/ X==0 never interact with anything, including the borders.
+
+ -- MOB-to-MOB collisions are evaluated within the visible screen and the
+    1 pixel border surrounding the screen.  
+
+     -- This 1 pixel border is 1 double-res pixel tall on top and bottom. 
+        It's the same border as is used for border-collision detect.
+
+ -- MOB-to-BACKTAB collisions are evaluated within the visible screen and
+    one column to the right of the visible screen.  That's it.  
+
+     -- No MOB-to-BACKTAB collisions are calculated in the bottom edge.
+
+     -- Horizontal and vertical delay are taken into account as with
+        everything else.
+ 
+
+

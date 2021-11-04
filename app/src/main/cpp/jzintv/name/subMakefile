@@ -1,0 +1,9 @@
+##############################################################################
+## subMakefile for name
+##############################################################################
+
+name/name.$(O): name/name.c name/name.h name/subMakefile config.h misc/types.h
+name/name.$(O): metadata/metadata.h metadata/cfgvar_metadata.h
+name/name_list.$(O): name/name_list.c name/name.h name/subMakefile config.h
+
+OBJS += name/name.$(O) name/name_list.$(O)

@@ -1,0 +1,28 @@
+##############################################################################
+## subMakefile for pads
+##############################################################################
+
+pads/pads.$(O): pads/pads.c pads/pads.h pads/subMakefile
+pads/pads.$(O): config.h periph/periph.h
+
+pads/pads_cgc.$(O): pads/pads_cgc.c pads/pads_cgc.h 
+pads/pads_cgc.$(O): pads/subMakefile config.h periph/periph.h
+pads/pads_cgc.$(O): pads/pads_cgc_linux.h
+pads/pads_cgc.$(O): pads/pads_cgc_win32.h
+
+pads/pads_cgc_linux.$(O): pads/pads_cgc_linux.c pads/pads_cgc.h 
+pads/pads_cgc_linux.$(O): pads/subMakefile config.h periph/periph.h
+pads/pads_cgc_linux.$(O): sdl_jzintv.h
+pads/pads_cgc_linux.$(O): pads/pads_cgc_linux.h
+
+pads/pads_cgc_win32.$(O): pads/pads_cgc_win32.c pads/pads_cgc.h 
+pads/pads_cgc_win32.$(O): pads/subMakefile config.h periph/periph.h
+pads/pads_cgc_win32.$(O): pads/pads_cgc_win32.h
+
+pads/pads_intv2pc.$(O): pads/pads_intv2pc.c pads/pads_intv2pc.h 
+pads/pads_intv2pc.$(O): pads/subMakefile config.h periph/periph.h event/event.h
+
+OBJS += pads/pads.$(O)
+OBJS += pads/pads_cgc.$(O)
+
+# other pads objects need to be added in target-specific Makefiles

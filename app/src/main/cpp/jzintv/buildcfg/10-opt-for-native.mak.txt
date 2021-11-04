@@ -1,0 +1,13 @@
+# By default, tune for the native machine, unless a debug build.
+#
+# If you're releasing a binary that needs to work on a wider range of
+# machines, consider specifying something more restrictive.  See these
+# files for examples:
+#
+#   buildcfg/10-opt-for-linux-x86-64-release.mak.txt
+#   buildcfg/10-opt-for-osx-x86-64-release.mak.txt
+#
+# Examples here: https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html
+ifneq ($(DEBUG),1)
+  OPT_FLAGS += -march=native -mtune=native
+endif

@@ -1,0 +1,77 @@
+##############################################################################
+## subMakefile for as1600
+##############################################################################
+
+ASMSRC  = asm/as1600.tab.c asm/fraosub.c asm/frapsub.c asm/frasmain.c
+ASMSRC += asm/cpp_main.cpp asm/fryylex.c asm/intermed.c asm/memo_string.c
+ASMOBJ  = asm/as1600.tab.$(O) asm/fraosub.$(O) asm/frapsub.$(O)
+ASMOBJ += asm/frasmain.$(O) asm/cpp_main.$(O) asm/fryylex.$(O)
+ASMOBJ += asm/intermed.$(O) asm/memo_string.$(O)
+ASMOBJ += asm/collect.$(O) asm/intvec.$(O)
+ASMOBJ += icart/icartrom.$(O) icart/icartbin.$(O)
+ASMOBJ += icart/icarttag.$(O) icart/icarttag_authors.$(O)
+ASMOBJ += misc/crc16.$(O) misc/types.$(O)
+ASMOBJ += plat/plat_gen.$(O) plat/gnu_getopt.$(O)
+IMOBJ   = imasm/c_wrap.$(O) imasm/parser.$(O) imasm/token.$(O)
+IMOBJ  += imasm/strfifo.$(O) 
+
+ASM_EXT_OBJS  = $(IMOBJ)
+ASM_EXT_OBJS += $(BCOBJ)
+ASM_EXT_OBJS += $(METADATA_OBJS)
+ASM_EXT_OBJS += $(FILEOBJ)
+ASM_EXT_OBJS += misc/ll.$(O)
+ASM_EXT_OBJS += misc/printer.$(O)
+
+$(B)/as1600$(X): $(ASMOBJ) $(ASM_EXT_OBJS) svn_revision.$(O)
+	$(CXX) $(FE)$(B)/as1600$(X) $(CFLAGS) $(ASMOBJ) $(ASM_EXT_OBJS) svn_revision.$(O) $(SLFLAGS)
+
+ASM_CORE_HDRS  = asm/protos.h file/file.h config.h asm/intermed.h
+ASM_CORE_HDRS += asm/fraebin.h asm/fraeuni.h asm/fragcon.h asm/frasmdat.h
+ASM_CORE_HDRS += asm/as1600.tab.h asm/as1600_types.h 
+ASM_CORE_HDRS += asm/typetags.h asm/intvec.h
+
+asm/as1600.$(O):        $(ASM_CORE_HDRS)
+asm/as1600.tab.$(O):    $(ASM_CORE_HDRS)
+asm/intermed.$(O):      $(ASM_CORE_HDRS)
+asm/fraosub.$(O):       $(ASM_CORE_HDRS)
+asm/frapsub.$(O):       $(ASM_CORE_HDRS)
+asm/frasmain.$(O):      $(ASM_CORE_HDRS)
+asm/fryylex.$(O):       $(ASM_CORE_HDRS)
+
+asm/as1600.tab.$(O):    asm/memo_string.h asm/intvec.h
+asm/memo_string.$(O):   asm/memo_string.h asm/intvec.h config.h
+
+asm/frasmain.$(O):      imasm/c_wrap.h file/file.h config.h
+asm/fryylex.$(O):       imasm/c_wrap.h
+
+asm/fraosub.$(O):       config.h asm/collect.h
+asm/fraosub.$(O):       icart/icartrom.h icart/icartbin.h
+
+asm/collect.$(O):       config.h asm/fragcon.h asm/as1600_types.h
+asm/collect.$(O):       config.h icart/icartrom.h asm/protos.h asm/frasmdat.h
+asm/collect.$(O):       asm/collect.h misc/types.h misc/printer.h asm/intvec.h
+asm/collect.$(O):       metadata/metadata.h metadata/cfgvar_metadata.h
+
+asm/intvec.$(O):        config.h asm/intvec.h
+
+#asm/cpp_main.$(O): asm/cpp_main.cpp
+#	$(CXX) $(CFLAGS) $(FO)asm/cpp_main.$(O) -c asm/cpp_main.cpp
+
+asm/as1600.tab.$(O): asm/as1600.tab.c asm/as1600.tab.h file/file.h config.h
+
+.DUMMY:	asm_regen
+
+asm_regen:
+	bison -o asm/as1600.tab.c --defines asm/as1600_real.y
+
+asm_regen_report:
+	bison -o asm/as1600.tab.c -v --report all --defines asm/as1600_real.y
+
+#asm/as1600.$(O): asm/as1600.tab.h
+#	$(CC) $(FO)asm/as1600.$(O) $(CFLAGS) -c asm/as1600.tab.c
+
+TOCLEAN += $(B)/as1600$(X) $(ASMOBJ) $(IMOBJ) asm/as1600.report
+PROGS   += $(B)/as1600$(X)
+GENCLN	+= asm/as1600.tab.c asm/as1600.tab.h
+GENTRG	+= asm_regen
+

@@ -1,0 +1,9 @@
+##############################################################################
+## subMakefile for scale
+##############################################################################
+
+scale/scale2x.$(O): scale/scale2x.c scale/scale2x.h scale/subMakefile
+scale/scale3x.$(O): scale/scale3x.c scale/scale3x.h scale/subMakefile
+
+OBJS += scale/scale2x.$(O) scale/scale3x.$(O)
+

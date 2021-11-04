@@ -1,0 +1,95 @@
+
+All of the other C and H files in this directory (except as1600.c) come
+from the public-domain retargetable Frankenstein Assembler by Mark Zenier.
+The Yacc description for the CP-1600 was written based loosely on the
+existing as2650 description, and was written by yours truly, Joe Zbiciak.
+
+The Frankenstein Assembler is in the public domain.  My modifications
+to the Frankenstein Assembler are hereby placed under GPL.  (Eventually,
+I plan to clean up the 100s of warnings that GCC spews out for the 
+code.  Eventually.)
+
+Note:  General documentation for Frankenstein is in base.ps.  The full,
+original source for the Frankenstein Assembler can be downloaded from
+ 
+    http://spatula-city.org/~im14u2c/intv/franky.zip
+
+Have fun.  Questions, problems:  intvnut@gmail.com (Joe Zbiciak)
+
+
+Some quick notes:
+
+ -- as1600 outputs both .BIN+CFG and .ROM formats.  Due to how I've
+    architected the ROM construction, binary images are always a 
+    multiple of 256 bytes long.
+
+ -- Syntax differs sligthly from Carl's assembler.  This assembler is
+    much stricter about using GI's syntax.  Also, procedure declarations
+    are handled differently.
+
+             Carl's:                      Frankenstein:
+
+    ROMWIDTH EQU 10                       ROMWIDTH 10
+    PROC     FOO                  FOO:    PROC
+    @@LBL:                        @@LBL:  MVII #$123, R0
+             MVII  $123, R0             
+    ENDP                                  ENDP
+             JSR   R5,FOO.LBL             JSR  R5, FOO.LBL
+
+ -- This assembler recognizes "SP" as an alias for R6, and "PC" as an 
+    alias for R7.
+
+ -- This assembler supports a large number of pseudo-ops:
+
+        TSTR Rx     -->   MOVR Rx, Rx
+        CLRR Rx     -->   XORR Rx, Rx
+        PSHR Rx     -->   MVO@ Rx, SP
+        PULR Rx     -->   MVI@ SP, Rx
+        JR   Rx     -->   MOVR Rx, PC
+        CALL addr   -->   JSR  R5, addr
+        BEGIN       -->   MVO@ R5, SP
+        RETURN      -->   MVI@ SP, PC
+
+ -- It also supports a number of CP-1600-specific directives:
+
+        DCW         -->   Emit words to binary.  Same as BYTE.
+        DECLE       -->   Same as DCW, BYTE.
+        BIDECLE     -->   Outputs word in DBD format.  Same as WORD.
+        ROMWIDTH    -->   Sets ROM width (default is 16.)
+        ROMW        -->   Alias for ROMWIDTH
+
+ -- This assembler will automatically insert SDBDs in many cases
+    for immediate-mode instructions.  See the description of ROMW
+    (next bullet) for more details.
+
+ -- The ROMW directive accepts one or two parameters.  The first
+    parameter is the ROM width.  The second parameter changes the
+    the assembler's behavior on immediate values.  The default
+    is Mode 0 -- assume forward references do not need SDBD.  
+    You can change this to Mode 1 -- assume forward references DO
+    need SDBD.
+
+    Ordinarily, the assembler automatically inserts SDBD instructions
+    for immediate operands as is necessary.  However, this does not
+    work when an expression or symbol is not yet defined (eg. a forward
+    reference).  By default, the assembler assumes these references
+    will fit within the ROM width, and it requires you to explicitly
+    provide SDBD where they won't.  In Mode 1, the assembler will
+    insert an SDBD in this case, and issue a warning telling you it
+    did so.
+
+Limitations:
+
+ -- Error reporting isn't all that great when constant widths
+    overflow the ROM width.  All you get is "expression exceeds
+    available field width", which isn't 100% descriptive.
+
+ -- You still occasionally need to use SDBDs, since the current
+    "automatic SDBD" code only works with forward references.
+    This can be made fancier, but I doubt I'll get to it.  Modern
+    code can use ROMW 16 anyway.
+
+ -- Code which works with Carl's assembler will not work with this
+    one, due to the difference in syntax on immediate-mode 
+    instructions.
+
