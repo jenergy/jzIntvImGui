@@ -13,5 +13,5 @@
 .externalNativeBuild
 .cxx
 .hg*
-hg/*
+hg*
 .idea*
