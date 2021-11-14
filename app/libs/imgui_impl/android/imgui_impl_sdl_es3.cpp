@@ -212,13 +212,17 @@ bool ImGui_ImplSdlGLES3_ProcessEvent(SDL_Event* event)
     case SDL_KEYDOWN:
     case SDL_KEYUP:
         {
-            int key = event->key.keysym.sym & ~SDLK_SCANCODE_MASK;
-            io.KeysDown[key] = (event->type == SDL_KEYDOWN);
-            io.KeyShift = ((SDL_GetModState() & KMOD_SHIFT) != 0);
-            io.KeyCtrl = ((SDL_GetModState() & KMOD_CTRL) != 0);
-            io.KeyAlt = ((SDL_GetModState() & KMOD_ALT) != 0);
-            io.KeySuper = ((SDL_GetModState() & KMOD_GUI) != 0);
-            return true;
+           int key = event->key.keysym.scancode;
+           if (key == SDL_SCANCODE_BACKSPACE) {
+              io.KeysDown[key] = 1;
+           } else {
+              io.KeysDown[key] = (event->type == SDL_KEYDOWN);
+           }
+           io.KeyShift = ((SDL_GetModState() & KMOD_SHIFT) != 0);
+           io.KeyCtrl = ((SDL_GetModState() & KMOD_CTRL) != 0);
+           io.KeyAlt = ((SDL_GetModState() & KMOD_ALT) != 0);
+           io.KeySuper = ((SDL_GetModState() & KMOD_GUI) != 0);
+           return true;
         }
     }
     return false;
@@ -366,7 +370,7 @@ bool    ImGui_ImplSdlGLES3_Init(SDL_Window* window)
     io.KeyMap[ImGuiKey_Home] = SDL_SCANCODE_HOME;
     io.KeyMap[ImGuiKey_End] = SDL_SCANCODE_END;
     io.KeyMap[ImGuiKey_Delete] = SDLK_DELETE;
-    io.KeyMap[ImGuiKey_Backspace] = SDLK_BACKSPACE;
+    io.KeyMap[ImGuiKey_Backspace] = SDL_SCANCODE_BACKSPACE;
     io.KeyMap[ImGuiKey_Enter] = SDLK_RETURN;
     io.KeyMap[ImGuiKey_Escape] = SDLK_ESCAPE;
     io.KeyMap[ImGuiKey_A] = SDLK_a;

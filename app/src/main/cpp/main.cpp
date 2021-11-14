@@ -1339,12 +1339,10 @@ static void get_size() {
     get_window_size(&(gui_util_str.act_window_width), &(gui_util_str.act_window_height));
     gui_util_str.portrait = gui_util_str.act_window_width < gui_util_str.act_window_height;
     if (app_config_struct.mobile_mode) {
-        bool send_force_fullscreen = false;
         // If we have navigation bar, two different window size are found, we need the larger
         if (gui_util_str.portrait) {
             if (gui_util_str.act_window_height != gui_util_str.mobile_major_size ||
                 gui_util_str.act_window_width != gui_util_str.mobile_minor_size) {
-                send_force_fullscreen = true;
                 if (gui_util_str.mobile_major_size > 0) {
                     Log(LOG_INFO) << "Forcing computation from " << gui_util_str.act_window_width << "x" << gui_util_str.act_window_height << " to " << gui_util_str.mobile_minor_size << "x" << gui_util_str.mobile_major_size;
                 }
@@ -1360,7 +1358,6 @@ static void get_size() {
         } else {
             if (gui_util_str.act_window_width != gui_util_str.mobile_major_size ||
                 gui_util_str.act_window_height != gui_util_str.mobile_minor_size) {
-                send_force_fullscreen = true;
                 if (gui_util_str.mobile_major_size > 0) {
                     Log(LOG_INFO) << "Forcing computation from " << gui_util_str.act_window_width << "x" << gui_util_str.act_window_height << " to " << gui_util_str.mobile_major_size << "x" << gui_util_str.mobile_minor_size;
                 }
@@ -1373,12 +1370,6 @@ static void get_size() {
             }
             gui_util_str.act_window_height = gui_util_str.mobile_minor_size;
             gui_util_str.act_window_width = gui_util_str.mobile_major_size;
-        }
-        if (send_force_fullscreen) {
-#ifdef __ANDROID__
-            // Sometimes (why??) status/navigation bars remain and this causes wrong computation for controls in LIBSDL
-            mobile_force_fullscreen();
-#endif
         }
     }
 }
@@ -1513,6 +1504,7 @@ static int start_gui() {
         if (!app_config_struct.ending_game) {
             // Rendering
             render();
+            on_render(app_config_struct.mobile_mode);
         }
 
         app_config_struct.ending_game = false;

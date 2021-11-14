@@ -175,10 +175,6 @@ extern "C" void check_screen_change() {
     int y;
     get_window_size(&x, &y);
     if (window_x != x || window_y != y) {
-        #ifdef __ANDROID__
-            // Sometimes (why??) status/navigation bars remain and this causes wrong computation for controls in LIBSDL
-            mobile_force_fullscreen();
-        #endif
         update_screen_size();
     }
 }

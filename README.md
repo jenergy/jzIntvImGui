@@ -131,7 +131,7 @@ Example:
      option1=value1
      option2=value2
 
-     [Control]
+     [Controls]
      [-- Named Control 1 -- ]
      option1=value1
      option2=value2

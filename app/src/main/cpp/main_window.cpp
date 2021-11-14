@@ -129,9 +129,9 @@ static bool list_is_dirty() {
     return gui_util_str.request_for_update_list_view || gui_util_str.list_is_dirty;
 }
 
+long start_millis = 0;
 void search_by_name(bool *change_rom, int *num_jump, int *last_char, bool *last_char_released) {
     static ostringstream oss;
-    static long start_millis = 0;
 
     ImGuiIO &io = ImGui::GetIO();
     ImWchar c = io.InputQueueCharacters[0];
@@ -209,7 +209,6 @@ void manage_key_pressed_main(bool any_popup_visible) {
     ImGuiIO &io = ImGui::GetIO();
     static int last_char = 0;
     static bool last_char_released = true;
-
     last_char_released = last_char == 0 || !ImGui::IsKeyDown(last_char);
     if (last_char_released && last_char != 0) {
         last_char = 0;
@@ -1092,10 +1091,6 @@ static bool manage_next_gui_event() {
         bool emulation_ok;
         switch (act_gui_event->event) {
             case SCROLL_EVENT:
-#ifdef __ANDROID__
-                // Sometimes (why??) status/navigation bars remain and this causes wrong computation for controls in LIBSDL
-                mobile_force_fullscreen();
-#endif
                 force_scroll(par_int, par_float);
                 break;
             case START_GAME_EVENT:
@@ -1117,12 +1112,9 @@ static bool manage_next_gui_event() {
                         init_effective_and_config_game_controls(find_roms_config_index(gui_util_str.rom_index_selected));
                     }
                     init_jzintv_screen_references();
+
                     emulation_ok = start_emulation(gui_util_str.rom_index_selected);
                     gui_util_str.center_at_rom_index_if_needed = true;
-#ifdef __ANDROID__
-                    // Sometimes (why??) status/navigation bars remain and this causes wrong computation for controls in LIBSDL
-                    mobile_force_fullscreen();
-#endif
                     app_config_struct.act_player = 0;
                     if (app_config_struct.mobile_mode) {
                         clear_effective_and_config_game_controls();
@@ -1138,17 +1130,16 @@ static bool manage_next_gui_event() {
                     } else {
                         request_for_scroll(SIMPLE_SCROLL_MODE);
                     }
+                    start_millis = 0;
+                    emulation_end();
                 }
                 break;
             case PREPARE_FOR_LAUNCH_GAME_EVENT:
-#ifdef __ANDROID__
-                // Sometimes (why??) status/navigation bars remain and this causes wrong computation for controls in LIBSDL
-                mobile_force_fullscreen();
-#endif
                 app_config_struct.starting_game = true;
                 get_center_rom_index(&gui_util_str.par_int, &gui_util_str.par_float);
                 submit_gui_event(START_GAME_EVENT, par_int, par_float);
                 millis = get_act_millis();
+                emulation_start();
                 break;
             case CLOSE_POPUP_EVENT:
                 free_popup();

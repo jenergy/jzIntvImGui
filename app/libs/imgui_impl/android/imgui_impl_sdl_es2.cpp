@@ -33,10 +33,6 @@ void ImGui_ImplSdlGLES2_RenderDrawLists(ImDrawData* draw_data)
     ImGuiIO& io = ImGui::GetIO();
     // Because of some weird handling of Android's virtual keyboard, we have to check if the Backspace button is pressed
     const Uint8* kbState = SDL_GetKeyboardState(NULL);
-    if (!kbState[SDL_SCANCODE_BACKSPACE])
-    {
-        io.KeysDown[SDLK_BACKSPACE] = 0;
-    }
     int fb_width = (int)(io.DisplaySize.x * io.DisplayFramebufferScale.x);
     int fb_height = (int)(io.DisplaySize.y * io.DisplayFramebufferScale.y);
     if (fb_width == 0 || fb_height == 0)
@@ -183,12 +179,12 @@ bool ImGui_ImplSdlGLES2_ProcessEvent(SDL_Event* event)
     case SDL_KEYDOWN:
     case SDL_KEYUP:
         {
-            // We have to handle the Backspace key as a special case here
-            int key = event->key.keysym.sym & ~SDLK_SCANCODE_MASK;
-            if (key == SDLK_BACKSPACE) {
-                io.KeysDown[key] = 1;
+        	// We have to handle the Backspace key as a special case here
+            int key = event->key.keysym.scancode;
+            if (key == SDL_SCANCODE_BACKSPACE) {
+               io.KeysDown[key] = 1;
             } else {
-                io.KeysDown[key] = (event->type == SDL_KEYDOWN);
+               io.KeysDown[key] = (event->type == SDL_KEYDOWN);
             }
             io.KeyShift = ((SDL_GetModState() & KMOD_SHIFT) != 0);
             io.KeyCtrl = ((SDL_GetModState() & KMOD_CTRL) != 0);
@@ -344,7 +340,7 @@ bool    ImGui_ImplSdlGLES2_Init(SDL_Window* window)
     io.KeyMap[ImGuiKey_Home] = SDL_SCANCODE_HOME;
     io.KeyMap[ImGuiKey_End] = SDL_SCANCODE_END;
     io.KeyMap[ImGuiKey_Delete] = SDLK_DELETE;
-    io.KeyMap[ImGuiKey_Backspace] = SDLK_BACKSPACE;
+    io.KeyMap[ImGuiKey_Backspace] = SDL_SCANCODE_BACKSPACE;
     io.KeyMap[ImGuiKey_Enter] = SDLK_RETURN;
     io.KeyMap[ImGuiKey_Escape] = SDLK_ESCAPE;
     io.KeyMap[ImGuiKey_A] = SDLK_a;

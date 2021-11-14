@@ -357,10 +357,6 @@ static void send_quit(void *val) {
         SDL_Log("no selection");
     } else {
         release_all_controls();
-#ifdef __ANDROID__
-        // Sometimes (why??) status/navigation bars remain and this causes wrong computation for controls in LIBSDL
-        mobile_force_fullscreen();
-#endif
         if (buttonid == 1) {
             Control *quit_control = get_control_by_event(QUIT, &device_default_controls[hand_index]);
             event_enqueue_custom(SDL_KEYDOWN, mapping_events[act_map][quit_control->jzintv_event_index].c_str());

@@ -13,7 +13,7 @@
             android:requestLegacyExternalStorage="true"
             android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
         <activity android:name=".MainActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize">
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|navigation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

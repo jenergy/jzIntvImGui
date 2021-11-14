@@ -28,7 +28,7 @@ SDL_GLContext get_context() {
     return ctx;
 }
 
-extern "C" void set_window(SDL_Window * w) {
+extern "C" void set_window(SDL_Window *w) {
     window = w;
 }
 
@@ -141,6 +141,7 @@ void clean(int mode) {
     }
 }
 
+bool escape_pressed = false;
 void check_for_special_event(bool *exit, app_config_struct_t *config) {
     *exit = false;
     SDL_Event event;
@@ -148,6 +149,11 @@ void check_for_special_event(bool *exit, app_config_struct_t *config) {
         processEvent(&event);
         if (event.type == SDL_QUIT) {
             *exit = true;
+        } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE && !escape_pressed) {
+            *exit = !check_back_config_window();
+            escape_pressed = true;
+        } else if (event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE && escape_pressed) {
+            escape_pressed = false;
         } else {
             switch (event.window.event) {
                 case SDL_WINDOWEVENT_MAXIMIZED:
@@ -187,7 +193,7 @@ bool get_force_fullscreen() {
     return false;
 }
 
-char* get_forced_resolution_argument() {
+char *get_forced_resolution_argument() {
     return NULL;
 }
 
@@ -229,4 +235,16 @@ void init_platform(int argc, char **argv) {
 
 void custom_show_message(string message) {
     Log(LOG_INFO) << message;
+}
+
+void emulation_start() {
+
+}
+
+void emulation_end() {
+
+}
+
+void on_render(bool mobile_mode) {
+
 }

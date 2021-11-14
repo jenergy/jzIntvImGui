@@ -239,3 +239,15 @@ void init_platform(int argc, char **argv) {
 void custom_show_message(string message) {
     Log(LOG_INFO) << message;
 }
+
+void emulation_start() {
+
+}
+
+void emulation_end() {
+
+}
+
+void on_render(bool mobile_mode) {
+
+}

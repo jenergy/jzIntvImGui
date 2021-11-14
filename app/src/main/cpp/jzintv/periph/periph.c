@@ -639,7 +639,7 @@ jzp_printf("now=%llu until=%llu soon=%llu\n", (unsigned long long)now, (unsigned
             /* ------------------------------------------------------------ */
             int condition = tick->now > soon;
             if (strcmp("[Sound]", tick->name)) {
-                // F..k..Samsung Galaxy S20 needs this, not sure about side effects
+                // Some Samsung devices need this, not sure about side effects
                 condition |= tick->min_tick > periph_step;
             }
             if (condition) {

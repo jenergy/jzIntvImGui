@@ -38,6 +38,17 @@ SDL_Window *get_window() {
     return window;
 }
 
+bool external_keyboard = false;
+void check_release_backspace(bool mobile_mode) {
+    if (mobile_mode && external_keyboard) {
+       const Uint8* kbState = SDL_GetKeyboardState(NULL);
+        if (!kbState[SDL_SCANCODE_BACKSPACE]) {
+          ImGuiIO &io = ImGui::GetIO();
+          io.KeysDown[SDL_SCANCODE_BACKSPACE] = 0;
+        }
+    }
+}
+
 static SDL_GLContext createCtx(SDL_Window *w) {
     // Prepare and create context
 //    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
@@ -151,13 +162,28 @@ void clean(int mode) {
     }
 }
 
+bool escape_pressed = false;
 void check_for_special_event(bool *exit, app_config_struct_t *config) {
     *exit = false;
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         processEvent(&event);
-        if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_AC_BACK)) {
+        switch (event.type)
+        {
+            case SDL_KEYUP:
+                int key = event.key.keysym.scancode;
+                if (key == SDL_SCANCODE_BACKSPACE) {
+                    check_release_backspace(config->mobile_mode);
+                }
+                break;
+        }
+        if (event.type == SDL_QUIT || (event.type == SDL_KEYDOWN && (event.key.keysym.sym == SDLK_AC_BACK || (event.key.keysym.sym == SDLK_ESCAPE && !escape_pressed )))) {
             *exit = !check_back_config_window();
+            if (event.key.keysym.sym == SDLK_ESCAPE) {
+                escape_pressed = true;
+            }
+        } else if (event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE && escape_pressed) {
+            escape_pressed = false;
         }
     }
 }
@@ -264,6 +290,20 @@ JNICALL Java_com_jzintvimgui_MainActivity_updateScreenSize(JNIEnv *env, jobject 
     return NULL;
 }
 
+extern "C" JNIEXPORT jstring
+JNICALL Java_com_jzintvimgui_MainActivity_enableTextInputForPhysicalKeyboard(JNIEnv *env) {
+    external_keyboard = true;
+    SDL_StartTextInput();
+    return NULL;
+}
+
+extern "C" JNIEXPORT jstring
+JNICALL Java_com_jzintvimgui_MainActivity_disableTextInputForPhysicalKeyboard(JNIEnv *env) {
+    external_keyboard = false;
+    SDL_StartTextInput();
+    return NULL;
+}
+
 void init_platform(int argc, char **argv) {
     while (!is_ok_permission()) {
         sleep(1);
@@ -349,12 +389,28 @@ void custom_show_message(string message) {
     env->DeleteLocalRef(jStringParam);
 }
 
-void mobile_force_fullscreen() {
+void emulation_start() {
+    SDL_StopTextInput();
     JNIEnv *env;
     javaVM->AttachCurrentThread(&env, NULL);
-    jmethodID method = env->GetMethodID(activityClass, "forceFullScreen", "()Ljava/lang/String;");
+    jmethodID method = env->GetMethodID(activityClass, "emulationStart", "()Ljava/lang/String;");
     jstring s = (jstring) env->CallObjectMethod(activityObj, method);
     jboolean isCopy;
     const char *res = env->GetStringUTFChars(s, &isCopy);
     env->DeleteLocalRef(s);
+}
+
+void emulation_end() {
+    JNIEnv *env;
+    javaVM->AttachCurrentThread(&env, NULL);
+    jmethodID method = env->GetMethodID(activityClass, "emulationEnd", "()Ljava/lang/String;");
+    jstring s = (jstring) env->CallObjectMethod(activityObj, method);
+    jboolean isCopy;
+    const char *res = env->GetStringUTFChars(s, &isCopy);
+    env->DeleteLocalRef(s);
+}
+
+void on_render(bool mobile_mode) {
+    ImGuiIO &io = ImGui::GetIO();
+    io.KeysDown[SDL_SCANCODE_BACKSPACE] = 0;
 }

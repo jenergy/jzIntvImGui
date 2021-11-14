@@ -1674,7 +1674,7 @@ static void on_configuration_window_close(bool save, bool *refresh_for_text) {
     gui_util_str.reset_backup_data = true;
 }
 
-#ifdef ANDROID
+#ifndef WIN32
 #include <ImGuiFileDialog.h>
 bool check_back_config_window() {
      if (gui_util_str.show_config_window) {
@@ -1686,6 +1686,14 @@ bool check_back_config_window() {
         }
         return true;
      }
+    return false;
+}
+#else
+bool check_back_config_window() {
+    if (gui_util_str.show_config_window) {
+        on_configuration_window_close(false, NULL);
+        return true;
+    }
     return false;
 }
 #endif

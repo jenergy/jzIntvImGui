@@ -52,9 +52,10 @@ class HIDDeviceUSB implements HIDDevice {
     @Override
     public String getSerialNumber() {
         String result = null;
-        if (Build.VERSION.SDK_INT >= 21) {
-            result = mDevice.getSerialNumber();
-        }
+// Commented to avoid crash when attaching Usb Devices
+//        if (Build.VERSION.SDK_INT >= 21) {
+//            result = mDevice.getSerialNumber();
+//        }
         if (result == null) {
             result = "";
         }

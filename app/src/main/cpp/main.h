@@ -410,9 +410,11 @@ extern bool get_force_fullscreen();
 extern SDL_FRect get_default_jzintv_rendering_frect(bool is_portrait);
 extern char *get_root_folder_for_configuration();
 extern void init_platform(int argc, char **argv);
-extern void mobile_force_fullscreen();
+extern void emulation_start();
+extern void emulation_end();
 extern char *get_forced_resolution_argument();
 extern void custom_show_message(string message);
+extern void on_render(bool mobile_mode);
 extern "C" void set_window(SDL_Window * w);
 
 #ifdef __ANDROID__

@@ -8,15 +8,14 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
-import android.content.res.Configuration;
-import android.graphics.Point;
 import android.graphics.Rect;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
@@ -30,6 +29,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 
 public class MainActivity extends org.libsdl.app.SDLActivity {
 
@@ -51,14 +51,22 @@ public class MainActivity extends org.libsdl.app.SDLActivity {
 
     private boolean isKeyboardShowing = false;
 
+    private boolean hardware_keyboard_available = false;
+
     @Override
     protected String[] getArguments() {
         return new String[]{getFilesDir().getAbsolutePath()};
     }
 
-    Handler sdlResolutionHandler = new Handler();
+    private void forceCloseSoftKeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
 
-    private void setSoftKeyboardListener() {
+    private void handleSoftKeyboardHook() {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         contentView = getWindow().getDecorView();
         contentView.getViewTreeObserver().addOnGlobalLayoutListener(
@@ -75,14 +83,12 @@ public class MainActivity extends org.libsdl.app.SDLActivity {
                             if (!isKeyboardShowing) {
                                 isKeyboardShowing = true;
                                 Log.d(TAG, "Soft keyboard open");
-                                forceFullScreen();
                             }
                         } else {
                             // keyboard is closed
                             if (isKeyboardShowing) {
                                 isKeyboardShowing = false;
                                 Log.d(TAG, "Soft keyboard closed");
-                                forceFullScreen();
                                 setClosedSoftKeyboard();
                             }
                         }
@@ -90,12 +96,109 @@ public class MainActivity extends org.libsdl.app.SDLActivity {
                 });
     }
 
+    private Handler usbDevicesHandler = null;
+    HashMap<String, Integer> usbMap = new HashMap<>();
+
+    private void manageUsb(boolean silence) {
+        StringBuilder sbDisconnected = new StringBuilder();
+        StringBuilder sbConnected = new StringBuilder();
+        UsbManager usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
+        HashMap<String, UsbDevice> deviceMap = usbManager.getDeviceList();
+        HashMap<String, Integer> newUsbMap = new HashMap<>();
+        for (String s : deviceMap.keySet()) {
+            String productName = deviceMap.get(s).getProductName();
+            int oldVal = newUsbMap.get(productName) == null ? 0 : newUsbMap.get(productName).intValue();
+            newUsbMap.put(productName, oldVal + 1);
+        }
+
+        for (String s : usbMap.keySet()) {
+            int before = usbMap.get(s) == null ? 0 : usbMap.get(s).intValue();
+            int now = newUsbMap.get(s) == null ? 0 : newUsbMap.get(s).intValue();
+            if (before > now) {
+                for (int i = now; i < before; i++) {
+                    if (sbDisconnected.length() == 0) {
+                        sbDisconnected.append("\nDisconnected:");
+                    }
+                    sbDisconnected.append("\n").append(s);
+                }
+            }
+        }
+
+        boolean old_hardware_keyboard_available = hardware_keyboard_available;
+        hardware_keyboard_available = false;
+        for (String s : newUsbMap.keySet()) {
+            int now = newUsbMap.get(s) == null ? 0 : newUsbMap.get(s).intValue();
+            int before = usbMap.get(s) == null ? 0 : usbMap.get(s).intValue();
+            if (s.toLowerCase().contains("keyboard")) {
+                // WEEAK
+                hardware_keyboard_available = true;
+            }
+            if (before < now) {
+                for (int i = before; i < now; i++) {
+                    if (sbConnected.length() == 0) {
+                        if (!silence) {
+                            sbConnected.append("\nConnected:");
+                        } else {
+                            sbConnected.append("\nDetected:");
+                        }
+                    }
+                    sbConnected.append("\n").append(s);
+                }
+            }
+        }
+
+        String msg = sbDisconnected.toString().trim() + sbConnected.toString().trim();
+        if (msg.length() > 0) {
+            showToast(msg);
+        }
+        usbMap = newUsbMap;
+
+        if (hardware_keyboard_available && !old_hardware_keyboard_available) {
+            enableTextInputForPhysicalKeyboard();
+        } else if (!hardware_keyboard_available && old_hardware_keyboard_available) {
+            disableTextInputForPhysicalKeyboard();
+            forceFullScreen();
+        }
+    }
+
+    private Handler tickHandlerLong = null;
+    private Handler tickHandlerShort = null;
+    private boolean tickFirst = true;
+
+    private void handleTickHookLong() {
+        if (tickHandlerLong == null) {
+            tickHandlerLong = new Handler();
+        }
+        tickHandlerLong.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                manageUsb(tickFirst);
+                tickFirst = false;
+                handleTickHookLong();
+            }
+        }, 1500);
+    }
+
+    private void handleTickHookShort() {
+        if (tickHandlerShort == null) {
+            tickHandlerShort = new Handler();
+        }
+        tickHandlerShort.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                forceFullScreen();
+                handleTickHookShort();
+            }
+        }, 500);
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setSoftKeyboardListener();
-
+        handleSoftKeyboardHook();
+        handleTickHookLong();
+        handleTickHookShort();
         toastHandler = new Handler();
         setPaths();
         initApplicationNative();
@@ -337,21 +440,27 @@ public class MainActivity extends org.libsdl.app.SDLActivity {
     }
 
     public String forceFullScreen() {
-        sdlResolutionHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                int flags;
-                if (isKeyboardShowing) {
-                    flags = View.INVISIBLE;
-                } else {
-                    flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |   // Nasconde navigation bar
-                            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY |  // Nasconde automaticamente navigation bar
-                            View.INVISIBLE;                         // Nasconde status bar
+        int flags = View.INVISIBLE;
+        if (!isKeyboardShowing) {
+            forceCloseSoftKeyboard();
+            flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |   // Nasconde navigation bar
+                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY |  // Nasconde automaticamente navigation bar
+                    View.INVISIBLE;                         // Nasconde status bar
 
-                }
-                getWindow().getDecorView().setSystemUiVisibility(flags);
-            }
-        }, 350);
+        }
+        getWindow().getDecorView().setSystemUiVisibility(flags);
+        return "";
+    }
+
+    public String emulationStart() {
+        forceFullScreen();
+        return "";
+    }
+
+    public String emulationEnd() {
+        if (hardware_keyboard_available) {
+            enableTextInputForPhysicalKeyboard();
+        }
         return "";
     }
 
@@ -378,4 +487,8 @@ public class MainActivity extends org.libsdl.app.SDLActivity {
     public native String setClosedSoftKeyboard();
 
     public native String updateScreenSize();
+
+    public native String enableTextInputForPhysicalKeyboard();
+
+    public native String disableTextInputForPhysicalKeyboard();
 }
