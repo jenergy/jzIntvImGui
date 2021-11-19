@@ -357,6 +357,7 @@ Dear ImGui actually does not support word wrap in multiline text fields. So I im
 ###### 29/05/2021 2.1.0 - Options screen
 ###### 05/10/2021 2.2.0 - First android release
 ###### 05/11/2021 2.2.6 - Stable version (Thanks Zendocon for your tests in intermediate releases)
+###### 20/11/2021 2.3.2 - Android usb management + jzIntv fix crash on launching a non JLP game after a JLP game
 
 <br/><br/>
 Have fun! <br/>
