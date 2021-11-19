@@ -265,8 +265,12 @@ na:     ;
  *  In the beginning, there was a main....
  * ============================================================================
  */
+extern int jlp_accel_on;
+extern int lto_isa_enabled;
 int jzintv_entry_point(int argc, char *argv[])
 {
+    jlp_accel_on=0;
+    lto_isa_enabled=0;
     int iter = 0, arg;
     double cycles = 0, rate, irate, then, now, icyc;
     double disp_time = get_time(), reset_time = disp_time, curr_time = disp_time;
