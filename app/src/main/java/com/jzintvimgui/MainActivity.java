@@ -100,7 +100,6 @@ public class MainActivity extends org.libsdl.app.SDLActivity {
                             if (isKeyboardShowing && !wait_for_change_configuration) {
                                 isKeyboardShowing = false;
                                 Log.d(TAG, "Soft keyboard is closed");
-                                forceCloseSoftKeyboard();
                                 setClosedSoftKeyboard();
                             }
                         }
@@ -143,6 +142,7 @@ public class MainActivity extends org.libsdl.app.SDLActivity {
             int before = usbMap.get(s) == null ? 0 : usbMap.get(s).intValue();
             if (s.toLowerCase().contains("keyboard")) {
                 // WEEAK
+                forceCloseSoftKeyboard();
                 hardware_keyboard_available = true;
             }
             if (before < now) {
