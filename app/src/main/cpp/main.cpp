@@ -1396,6 +1396,7 @@ void get_gap_pixels(int *l, int *r, int *t, int *b) {
     *b = bottom_gap_pixels;
 }
 
+extern long start_millis;
 static int start_gui() {
     if (-1 == init_gui()) {
         return -1;
@@ -1504,13 +1505,16 @@ static int start_gui() {
         if (!app_config_struct.ending_game) {
             // Rendering
             render();
-            on_render(app_config_struct.mobile_mode);
+            on_render();
         }
 
         app_config_struct.ending_game = false;
 
         if (refresh_for_text) {
             refresh_for_font_change();
+            SDL_StopTextInput();
+            start_millis = 0;
+            on_font_change();
         }
         refresh_for_text = false;
     }

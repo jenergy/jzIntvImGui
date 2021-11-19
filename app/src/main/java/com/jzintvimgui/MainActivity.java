@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
+import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
@@ -53,9 +54,19 @@ public class MainActivity extends org.libsdl.app.SDLActivity {
 
     private boolean hardware_keyboard_available = false;
 
+    private boolean wait_for_change_configuration = false;
+
     @Override
     protected String[] getArguments() {
         return new String[]{getFilesDir().getAbsolutePath()};
+    }
+
+    private void toggleKeyboardVisibility() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        }
     }
 
     private void forceCloseSoftKeyboard() {
@@ -80,15 +91,16 @@ public class MainActivity extends org.libsdl.app.SDLActivity {
                         int keypadHeight = screenHeight - r.bottom;
                         if (keypadHeight > screenHeight * 0.15) { // 0.15 ratio is perhaps enough to determine keypad height.
                             // keyboard is opened
-                            if (!isKeyboardShowing) {
+                            if (!isKeyboardShowing && !wait_for_change_configuration) {
                                 isKeyboardShowing = true;
-                                Log.d(TAG, "Soft keyboard open");
+                                Log.d(TAG, "Soft keyboard is open");
                             }
                         } else {
                             // keyboard is closed
-                            if (isKeyboardShowing) {
+                            if (isKeyboardShowing && !wait_for_change_configuration) {
                                 isKeyboardShowing = false;
-                                Log.d(TAG, "Soft keyboard closed");
+                                Log.d(TAG, "Soft keyboard is closed");
+                                forceCloseSoftKeyboard();
                                 setClosedSoftKeyboard();
                             }
                         }
@@ -163,7 +175,8 @@ public class MainActivity extends org.libsdl.app.SDLActivity {
 
     private Handler tickHandlerLong = null;
     private Handler tickHandlerShort = null;
-    private boolean tickFirst = true;
+    private boolean tickLongFirst = true;
+    private boolean tickShortFirst = true;
 
     private void handleTickHookLong() {
         if (tickHandlerLong == null) {
@@ -172,8 +185,8 @@ public class MainActivity extends org.libsdl.app.SDLActivity {
         tickHandlerLong.postDelayed(new Runnable() {
             @Override
             public void run() {
-                manageUsb(tickFirst);
-                tickFirst = false;
+                manageUsb(tickLongFirst);
+                tickLongFirst = false;
                 handleTickHookLong();
             }
         }, 1500);
@@ -186,7 +199,13 @@ public class MainActivity extends org.libsdl.app.SDLActivity {
         tickHandlerShort.postDelayed(new Runnable() {
             @Override
             public void run() {
-                forceFullScreen();
+                if (!wait_for_change_configuration) {
+                    forceFullScreen();
+                }
+                if (tickShortFirst) {
+                    forceCloseSoftKeyboard();
+                }
+                tickShortFirst = false;
                 handleTickHookShort();
             }
         }, 500);
@@ -442,7 +461,6 @@ public class MainActivity extends org.libsdl.app.SDLActivity {
     public String forceFullScreen() {
         int flags = View.INVISIBLE;
         if (!isKeyboardShowing) {
-            forceCloseSoftKeyboard();
             flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |   // Nasconde navigation bar
                     View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY |  // Nasconde automaticamente navigation bar
                     View.INVISIBLE;                         // Nasconde status bar
@@ -480,13 +498,30 @@ public class MainActivity extends org.libsdl.app.SDLActivity {
         return "";
     }
 
+    private void waitForSoftKeyb() {
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                wait_for_change_configuration = false;
+            }
+        }, 1000);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (isKeyboardShowing) {
+            wait_for_change_configuration = true;
+            waitForSoftKeyb();
+        }
+    }
+
     public native String initApplicationNative();
 
     public native String setOkPermission();
 
     public native String setClosedSoftKeyboard();
-
-    public native String updateScreenSize();
 
     public native String enableTextInputForPhysicalKeyboard();
 

@@ -697,7 +697,7 @@ static void draw_left_child() {
         if (list_is_dirty()) {
             gui_util_str.positions->clear();
             gui_util_str.rom_index_selected = -1;
-            selectable_height = gui_util_str.roms_list_scrollable.window->Size.y / 10;
+            selectable_height = round(gui_util_str.roms_list_scrollable.window->Size.y / 10);
             if (selectable_height < font_size * 2 + MY_FAVOURITE_BORDER) {
                 selectable_height = font_size * 2 + MY_FAVOURITE_BORDER;
             }
@@ -1140,6 +1140,7 @@ static bool manage_next_gui_event() {
                 submit_gui_event(START_GAME_EVENT, par_int, par_float);
                 millis = get_act_millis();
                 emulation_start();
+                SDL_StopTextInput();
                 break;
             case CLOSE_POPUP_EVENT:
                 free_popup();

@@ -283,13 +283,6 @@ char* get_forced_resolution_argument() {
     return strdup("-z3");
 }
 
-extern "C" void update_screen_size();
-extern "C" JNIEXPORT jstring
-JNICALL Java_com_jzintvimgui_MainActivity_updateScreenSize(JNIEnv *env, jobject obj) {
-    update_screen_size();
-    return NULL;
-}
-
 extern "C" JNIEXPORT jstring
 JNICALL Java_com_jzintvimgui_MainActivity_enableTextInputForPhysicalKeyboard(JNIEnv *env) {
     external_keyboard = true;
@@ -300,7 +293,7 @@ JNICALL Java_com_jzintvimgui_MainActivity_enableTextInputForPhysicalKeyboard(JNI
 extern "C" JNIEXPORT jstring
 JNICALL Java_com_jzintvimgui_MainActivity_disableTextInputForPhysicalKeyboard(JNIEnv *env) {
     external_keyboard = false;
-    SDL_StartTextInput();
+    SDL_StopTextInput();
     return NULL;
 }
 
@@ -390,7 +383,6 @@ void custom_show_message(string message) {
 }
 
 void emulation_start() {
-    SDL_StopTextInput();
     JNIEnv *env;
     javaVM->AttachCurrentThread(&env, NULL);
     jmethodID method = env->GetMethodID(activityClass, "emulationStart", "()Ljava/lang/String;");
@@ -410,7 +402,13 @@ void emulation_end() {
     env->DeleteLocalRef(s);
 }
 
-void on_render(bool mobile_mode) {
+void on_render() {
     ImGuiIO &io = ImGui::GetIO();
     io.KeysDown[SDL_SCANCODE_BACKSPACE] = 0;
+}
+
+void on_font_change() {
+   if (external_keyboard) {
+       SDL_StartTextInput();
+   }
 }

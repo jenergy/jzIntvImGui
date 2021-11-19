@@ -232,22 +232,15 @@ int get_default_buttons_size() {
     return 22;
 }
 
-void init_platform(int argc, char **argv) {
-
-}
-
 void custom_show_message(string message) {
     Log(LOG_INFO) << message;
 }
 
-void emulation_start() {
-
+void on_font_change() {
+    SDL_StartTextInput();
 }
 
-void emulation_end() {
-
-}
-
-void on_render(bool mobile_mode) {
-
-}
+void init_platform(int argc, char **argv) {}
+void emulation_start() {}
+void emulation_end() {}
+void on_render() {}

@@ -33,7 +33,7 @@
 #include <sys/stat.h>
 #endif
 
-#define VERSION "2.2.6"
+#define VERSION "2.3.2"
 #define EMBEDDED_JZINTV_VERSION "jzintv-20200712"
 #define JZINTV_URL "http://spatula-city.org/~im14u2c/intv/"
 #define ZENDOCON_URL "https://atariage.com/forums/profile/31886-zendocon/"
@@ -116,8 +116,6 @@ struct app_config_struct_t {
     uint64_t window_height;
     uint64_t buttons_size;
     uint64_t scrollbar_size;
-    double roms_list_width_percentage;
-    double image_height_percentage;
     uint64_t last_crc32;
     uint64_t num_roms_jump;
     uint64_t font_size;
@@ -127,6 +125,17 @@ struct app_config_struct_t {
     uint64_t mobile_default_landscape_controls_size;
     uint64_t mobile_ecs_portrait_alpha;
     uint64_t mobile_ecs_landscape_alpha;
+    bool hide_unavailable_roms;
+    bool window_maximized;
+    bool jzintv_fullscreen;
+    bool mobile_show_controls;
+    bool mobile_show_configuration_controls;
+    bool mobile_use_inverted_controls;
+    // To align memory pointer for saving ini (really sad)
+    bool dummy1;
+    bool dummy2;
+    double roms_list_width_percentage;
+    double image_height_percentage;
     double mobile_portrait_top_gap_percentage;
     double mobile_portrait_bottom_gap_percentage;
     double mobile_landscape_left_gap_percentage;
@@ -138,12 +147,6 @@ struct app_config_struct_t {
     char *palette_file;
     char *font_filename;
 
-    bool hide_unavailable_roms;
-    bool window_maximized;
-    bool mobile_show_controls;
-    bool mobile_show_configuration_controls;
-    bool jzintv_fullscreen;
-    bool mobile_use_inverted_controls;
     SDL_FRect mobile_portrait_rect;
     SDL_FRect mobile_landscape_rect;
 
@@ -414,7 +417,8 @@ extern void emulation_start();
 extern void emulation_end();
 extern char *get_forced_resolution_argument();
 extern void custom_show_message(string message);
-extern void on_render(bool mobile_mode);
+extern void on_render();
+extern void on_font_change();
 extern "C" void set_window(SDL_Window * w);
 
 #ifdef __ANDROID__
