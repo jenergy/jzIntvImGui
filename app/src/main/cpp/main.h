@@ -33,7 +33,7 @@
 #include <sys/stat.h>
 #endif
 
-#define VERSION "2.3.2"
+#define VERSION "2.3.3"
 #define EMBEDDED_JZINTV_VERSION "jzintv-20200712"
 #define JZINTV_URL "http://spatula-city.org/~im14u2c/intv/"
 #define ZENDOCON_URL "https://atariage.com/forums/profile/31886-zendocon/"

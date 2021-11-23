@@ -39,12 +39,18 @@ SDL_Window *get_window() {
 }
 
 bool external_keyboard = false;
-void check_release_backspace(bool mobile_mode) {
-    if (mobile_mode && external_keyboard) {
+void check_release_special_keys() {
+    if (external_keyboard) {
+       ImGuiIO &io = ImGui::GetIO();
        const Uint8* kbState = SDL_GetKeyboardState(NULL);
         if (!kbState[SDL_SCANCODE_BACKSPACE]) {
-          ImGuiIO &io = ImGui::GetIO();
           io.KeysDown[SDL_SCANCODE_BACKSPACE] = 0;
+        }
+        if (!kbState[SDL_SCANCODE_DELETE]) {
+          io.KeysDown[SDL_SCANCODE_DELETE] = 0;
+        }
+        if (!kbState[SDL_SCANCODE_RETURN]) {
+          io.KeysDown[SDL_SCANCODE_RETURN] = 0;
         }
     }
 }
@@ -172,8 +178,8 @@ void check_for_special_event(bool *exit, app_config_struct_t *config) {
         {
             case SDL_KEYUP:
                 int key = event.key.keysym.scancode;
-                if (key == SDL_SCANCODE_BACKSPACE) {
-                    check_release_backspace(config->mobile_mode);
+                if (key == SDL_SCANCODE_BACKSPACE || key == SDL_SCANCODE_RETURN || key == SDL_SCANCODE_DELETE) {
+                    check_release_special_keys();
                 }
                 break;
         }
@@ -405,6 +411,8 @@ void emulation_end() {
 void on_render() {
     ImGuiIO &io = ImGui::GetIO();
     io.KeysDown[SDL_SCANCODE_BACKSPACE] = 0;
+    io.KeysDown[SDL_SCANCODE_RETURN] = 0;
+    io.KeysDown[SDL_SCANCODE_DELETE] = 0;
 }
 
 void on_font_change() {

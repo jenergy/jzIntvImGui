@@ -181,7 +181,7 @@ bool ImGui_ImplSdlGLES2_ProcessEvent(SDL_Event* event)
         {
         	// We have to handle the Backspace key as a special case here
             int key = event->key.keysym.scancode;
-            if (key == SDL_SCANCODE_BACKSPACE) {
+            if (key == SDL_SCANCODE_BACKSPACE || key == SDL_SCANCODE_RETURN || key == SDL_SCANCODE_DELETE) {
                io.KeysDown[key] = 1;
             } else {
                io.KeysDown[key] = (event->type == SDL_KEYDOWN);
@@ -339,10 +339,10 @@ bool    ImGui_ImplSdlGLES2_Init(SDL_Window* window)
     io.KeyMap[ImGuiKey_PageDown] = SDL_SCANCODE_PAGEDOWN;
     io.KeyMap[ImGuiKey_Home] = SDL_SCANCODE_HOME;
     io.KeyMap[ImGuiKey_End] = SDL_SCANCODE_END;
-    io.KeyMap[ImGuiKey_Delete] = SDLK_DELETE;
+    io.KeyMap[ImGuiKey_Delete] = SDL_SCANCODE_DELETE;
     io.KeyMap[ImGuiKey_Backspace] = SDL_SCANCODE_BACKSPACE;
-    io.KeyMap[ImGuiKey_Enter] = SDLK_RETURN;
-    io.KeyMap[ImGuiKey_Escape] = SDLK_ESCAPE;
+    io.KeyMap[ImGuiKey_Enter] = SDL_SCANCODE_RETURN;
+    io.KeyMap[ImGuiKey_Escape] = SDL_SCANCODE_ESCAPE;
     io.KeyMap[ImGuiKey_A] = SDLK_a;
     io.KeyMap[ImGuiKey_C] = SDLK_c;
     io.KeyMap[ImGuiKey_V] = SDLK_v;

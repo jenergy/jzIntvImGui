@@ -107,6 +107,8 @@ public class MainActivity extends org.libsdl.app.SDLActivity {
                 });
     }
 
+    private boolean isHardwareKeyboardAvailable() { return getResources().getConfiguration().keyboard != Configuration.KEYBOARD_NOKEYS; }
+
     private Handler usbDevicesHandler = null;
     HashMap<String, Integer> usbMap = new HashMap<>();
 
@@ -142,7 +144,6 @@ public class MainActivity extends org.libsdl.app.SDLActivity {
             int before = usbMap.get(s) == null ? 0 : usbMap.get(s).intValue();
             if (s.toLowerCase().contains("keyboard")) {
                 // WEEAK
-                forceCloseSoftKeyboard();
                 hardware_keyboard_available = true;
             }
             if (before < now) {
@@ -157,6 +158,11 @@ public class MainActivity extends org.libsdl.app.SDLActivity {
                     sbConnected.append("\n").append(s);
                 }
             }
+        }
+
+        hardware_keyboard_available |= isHardwareKeyboardAvailable();
+        if (hardware_keyboard_available) {
+            forceCloseSoftKeyboard();
         }
 
         String msg = sbDisconnected.toString().trim() + sbConnected.toString().trim();
