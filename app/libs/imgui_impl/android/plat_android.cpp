@@ -30,14 +30,6 @@ SDL_GLContext get_context() {
     return ctx;
 }
 
-extern "C" void set_window(SDL_Window * w) {
-    window = w;
-}
-
-SDL_Window *get_window() {
-    return window;
-}
-
 bool external_keyboard = false;
 void check_release_special_keys() {
     if (external_keyboard) {

@@ -178,7 +178,6 @@ void clean(int mode) {
         socketExit();
     }
 }
-
 void check_for_special_event(bool *exit, app_config_struct_t* config) {
     *exit = glfwWindowShouldClose(window);
 }
@@ -204,7 +203,7 @@ bool get_default_mobile_show_configuration_controls() {
 }
 
 char* get_forced_resolution_argument() {
-    return strdup("-z4");
+    return strdup("-z960x708,16bpp");
 }
 
 bool get_force_fullscreen() {
@@ -213,23 +212,50 @@ bool get_force_fullscreen() {
 
 SDL_FRect get_default_jzintv_rendering_frect(bool is_portrait) {
     SDL_FRect tmp;
-    tmp.x = 0;
-    tmp.y = 0;
-    tmp.w = 100;
-    tmp.h = 100;
+    float ratio = 1.30;
+    float real_win_x;
+    float real_win_y;
+    if (!is_portrait) {
+        // Landscape
+        tmp.h = 100;
+        tmp.y = 0;
+        if (window_x > 0) {
+            real_win_x = window_x > window_y ? window_x : window_y;
+            real_win_y = window_x > window_y ? window_y : window_x;
+            float real_pixel = ((float) real_win_y) * ratio;
+            tmp.w = (((float) 100) * real_pixel) / (float) real_win_x;
+            tmp.x = (100 - tmp.w) / 2;
+        } else {
+            tmp.w = -1;
+            tmp.x = -1;
+        }
+    } else {
+        // Portrait
+        tmp.w = 100;
+        tmp.x = 0;
+        tmp.y = 5;
+        if (window_x > 0) {
+            real_win_x = window_x > window_y ? window_y : window_x;
+            real_win_y = window_x > window_y ? window_x : window_y;
+            float real_pixel = ((float) real_win_x) / ratio;
+            tmp.h = (((float) 100) * real_pixel) / (float) real_win_y;
+        } else {
+            tmp.h = -1;
+        }
+    }
     return tmp;
 }
 
 int get_default_font_size() {
-    return 15;
+    return 26;
 }
 
 int get_default_scrollbar_size() {
-    return 18;
+    return 48;
 }
 
 int get_default_buttons_size() {
-    return 22;
+    return 48;
 }
 
 void custom_show_message(string message) {
@@ -237,7 +263,7 @@ void custom_show_message(string message) {
 }
 
 void on_font_change() {
-    SDL_StartTextInput();
+//    SDL_StartTextInput();
 }
 
 void init_platform(int argc, char **argv) {}

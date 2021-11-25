@@ -1,5 +1,10 @@
 #include "main.h"
+
+#ifdef __SWITCH__
+#include "SDL2/SDL_image.h"
+#else
 #include "SDL_image.h"
+#endif
 
 extern bool screen_is_portrait;
 int act_map = 0;

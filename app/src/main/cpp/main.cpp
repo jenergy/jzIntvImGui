@@ -207,11 +207,11 @@ static void apply_default_settings() {
 
     app_conf->custom_commands = new vector<string>();
 
-    if (app_config_struct.mobile_mode) {
-        gui_util_str.splitter_tickness = 40.0f;
-    } else {
-        gui_util_str.splitter_tickness = 3.0f;
-    }
+//    if (app_config_struct.mobile_mode) {
+        gui_util_str.splitter_tickness = 12.0f;
+//    } else {
+//        gui_util_str.splitter_tickness = 3.0f;
+//    }
 }
 
 static void load_configuration() {
@@ -772,11 +772,12 @@ static void add_jzintv_command(vector<string> *commands_list, std::basic_ostream
     std::stringstream ss;
     ss << ostream.rdbuf();
     string command = ss.str();
+
     char *formatted;
 #ifdef WIN32
     formatted = replaceWord(command.c_str(), "/", "\\");
 #else
-    formatted = strdup(command.c_str());
+    formatted = replaceWord(command.c_str(), "sdmc:", "");
 #endif
     commands_list->push_back(formatted);
     free(formatted);
@@ -1308,19 +1309,19 @@ int get_key_pressed() {
     // 8:scroll_page_up
     // 9:search_by_letter
     ImGuiIO &io = ImGui::GetIO();
-    if (!gui_util_str.show_config_window && ImGui::IsKeyPressed(SDL_SCANCODE_RIGHT)) {
+    if (!gui_util_str.show_config_window && ImGui::IsKeyPressed(262)) {
         return 1;
-    } else if (!gui_util_str.show_config_window && ImGui::IsKeyPressed(SDL_SCANCODE_LEFT)) {
+    } else if (!gui_util_str.show_config_window && ImGui::IsKeyPressed(263)) {
         return 2;
-    } else if (!gui_util_str.show_config_window && ImGui::IsKeyPressed(SDL_SCANCODE_DOWN)) {
+    } else if (!gui_util_str.show_config_window && ImGui::IsKeyPressed(264)) {
         return 3;
-    } else if (!gui_util_str.show_config_window && ImGui::IsKeyPressed(SDL_SCANCODE_UP)) {
+    } else if (!gui_util_str.show_config_window && ImGui::IsKeyPressed(265)) {
         return 4;
-    } else if (!gui_util_str.show_config_window && ImGui::IsKeyReleased(SDL_SCANCODE_RETURN)) {
+    } else if (!gui_util_str.show_config_window && ImGui::IsKeyReleased(88)) {
         return check_last_key_released(5);
-    } else if (ImGui::IsKeyReleased(SDL_SCANCODE_TAB)) {
+    } else if (ImGui::IsKeyReleased(256)) {
         return check_last_key_released(TAB_KEY_INDEX);
-    } else if (ImGui::IsKeyReleased(SDL_SCANCODE_TAB)) {
+    } else if (ImGui::IsKeyReleased(257)) {
         return check_last_key_released(TAB_KEY_INDEX);
     } else if (!gui_util_str.show_config_window && ImGui::IsKeyPressed(SDL_SCANCODE_PAGEDOWN)) {
         return 7;

@@ -33,7 +33,7 @@
 #include <sys/stat.h>
 #endif
 
-#define VERSION "2.3.3"
+#define VERSION "2.3.4_NSW_WIP"
 #define EMBEDDED_JZINTV_VERSION "jzintv-20200712"
 #define JZINTV_URL "http://spatula-city.org/~im14u2c/intv/"
 #define ZENDOCON_URL "https://atariage.com/forums/profile/31886-zendocon/"
@@ -416,7 +416,6 @@ extern char *get_forced_resolution_argument();
 extern void custom_show_message(string message);
 extern void on_render();
 extern void on_font_change();
-extern "C" void set_window(SDL_Window * w);
 
 #ifdef __ANDROID__
 extern char *get_internal_sd_path();
@@ -527,6 +526,8 @@ extern SDL_FRect *get_rom_screen_frect(rom_config_struct_t *rom, bool is_portrai
 extern void init_jzintv_rendering_rect(bool is_for_custom_game);
 extern void normalize_screen_to_delta();
 extern "C" void check_screen_change();
+extern "C" void set_window(SDL_Window * w);
+extern void get_sdl_window_size(int *w, int *h);
 
 // Exceptions
 extern void throw_by_stream(std::basic_ostream<char, std::char_traits<char>> &ostream);

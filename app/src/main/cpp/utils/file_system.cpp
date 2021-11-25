@@ -146,6 +146,10 @@ char *get_absolute_path(const char *original_root_path, const char *append_path,
     }
 }
 
+char *get_absolute_path_from_root_folder(const char *append_path, bool is_path_free, int *result) {
+    return get_absolute_path(app_config_struct.root_folder_for_configuration, append_path, is_path_free, result);
+}
+
 char *normalize_path(const char *path, bool is_directory) {
     char *replaceDoubleBack = replaceWord(path, "\\", "/");
     char *val2 = replaceWord(replaceDoubleBack, "//", "/");

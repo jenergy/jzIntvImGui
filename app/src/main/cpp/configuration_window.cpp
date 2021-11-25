@@ -1890,7 +1890,7 @@ void show_configuration_window(bool *refresh_for_text) {
     gui_util_str.portrait = old_portrait;
     gui_util_str.act_window_width = old_win_width;
     gui_util_str.act_window_height = old_win_height;
-    if (gui_util_str.show_config_window && app_config_struct.mobile_mode) {
+    if (gui_util_str.show_config_window) {
         soft_keyb_management();
     }
 }

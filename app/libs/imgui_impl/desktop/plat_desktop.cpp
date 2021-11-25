@@ -28,14 +28,6 @@ SDL_GLContext get_context() {
     return ctx;
 }
 
-extern "C" void set_window(SDL_Window *w) {
-    window = w;
-}
-
-SDL_Window *get_window() {
-    return window;
-}
-
 static SDL_GLContext createCtx(SDL_Window *w) {
     // Prepare and create context
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);

@@ -55,7 +55,7 @@ SOFTWARE.
 #ifndef PATH_MAX
 #define PATH_MAX 260
 #endif // PATH_MAX
-#elif defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__APPLE__) || defined (__EMSCRIPTEN__)
+#elif defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__APPLE__) || defined (__EMSCRIPTEN__) || defined (__SWITCH__)
 #define UNIX
 #define stricmp strcasecmp
 #include <sys/types.h>
@@ -72,6 +72,9 @@ SOFTWARE.
 #include <cstdlib>
 #include <algorithm>
 #include <iostream>
+
+extern char *get_absolute_path_from_root_folder(const char *append_path, bool is_path_free, int *result);
+extern char *normalize_path(const char *path, bool is_directory);
 
 namespace IGFD
 {
@@ -2291,6 +2294,14 @@ namespace IGFD
 			{
 				std::cout << "fail to obtain FullPathName " << path << std::endl;
 			}
+#elif defined(__SWITCH__)
+            int result;
+            char *numchar = get_absolute_path_from_root_folder(path.c_str(), true, &result);
+            strcpy(real_path, numchar);
+            free(numchar);
+            numchar = real_path;
+            char* tmp = normalize_path(path.c_str(), true);
+            free(tmp);
 #elif defined(UNIX) // UNIX is LINUX or APPLE
 			char* numchar = realpath(path.c_str(), real_path);
 #endif // defined(UNIX)

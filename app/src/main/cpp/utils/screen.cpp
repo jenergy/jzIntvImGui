@@ -151,12 +151,21 @@ extern "C" void update_jzintv_rendering_rect(SDL_Rect *rect2) {
     if (*jzintv_rendering_rect_ptr == NULL) {
         init_jzintv_rendering_rect(true);
     }
+    Log(LOG_INFO) << "update_jzintv_rendering_rect:" << window_x << "x" << window_y;
     memcpy(rect2, *jzintv_rendering_rect_ptr, sizeof(SDL_Rect));
 }
 
+static SDL_Window *window;
+extern "C" void set_window(SDL_Window *w) {
+    window = w;
+}
+
+void get_sdl_window_size(int *w, int *h) {
+    SDL_GetWindowSize(window, w, h);
+}
+
 extern "C" void update_screen_size() {
-    get_window_size(&window_x, &window_y);
-    Log(LOG_INFO) << "Screen size updated:" << window_x << "x" << window_y;
+    get_sdl_window_size(&window_x, &window_y);
     if (window_x > window_y) {
         screen_is_portrait = false;
         window_ratio_portrait = (float) window_y / (float) window_x;
@@ -173,7 +182,7 @@ extern "C" void update_screen_size() {
 extern "C" void check_screen_change() {
     int x;
     int y;
-    get_window_size(&x, &y);
+    get_sdl_window_size(&x, &y);
     if (window_x != x || window_y != y) {
         update_screen_size();
     }

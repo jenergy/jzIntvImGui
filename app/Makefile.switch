@@ -49,7 +49,7 @@ INCLUDES	:=	include
 #---------------------------------------------------------------------------------
 ARCH	:=	-march=armv8-a+crc+crypto -mtune=cortex-a57 -mtp=soft -fPIE
 
-CFLAGS	:=	-g -Wall -O2 -ffunction-sections \
+CFLAGS	:=	-g -Wall -O2 -Wno-sign-compare -ffunction-sections \
 			$(ARCH) $(DEFINES)
 
 CFLAGS	+=	$(INCLUDE) -D__SWITCH__ -DUSE_SDL2 -DBYTE_LE -DNO_SETUID -DUSE_STRCASECMP -DNO_FCNTL -DUSE_FCNTL_H
@@ -187,6 +187,11 @@ CFILES += jzintv/joy/joy_sdl.c
 CFILES += jzintv/mouse/mouse_sdl.c
 CFILES += jzintv/svn_revision.c
 
+# ImguiFileDialog specific files
+CPPFILES += ../$(BUILD)/libs/ImGuiFileDialog/ImGuiFileDialog.cpp
+CPPFILES += ../$(BUILD)/libs/imgui_impl/switch/imgui_impl_glfw_switch.cpp
+CPPFILES += ../$(BUILD)/libs/imgui_impl/switch/plat_switch.cpp
+
 CPPFILES += jzintv/locutus/locutus.cpp
 CPPFILES += jzintv/locutus/luigi.cpp
 CPPFILES += jzintv/locutus/locutus_adapt.cpp
@@ -195,16 +200,33 @@ CPPFILES += jzintv/locutus/loc_to_bin.cpp
 CPPFILES += jzintv/locutus/bin_to_loc.cpp
 CPPFILES += jzintv/locutus/rom_to_loc.cpp
 
+# jzintvImgui files
 CPPFILES += main.cpp
-CPPFILES += strings.cpp
+CPPFILES += main_window.cpp
+CPPFILES += configuration_window.cpp
+CPPFILES += utils/strings.cpp
+CPPFILES += utils/time.cpp
+CPPFILES += utils/ini.cpp
+CPPFILES += utils/messages.cpp
+CPPFILES += utils/memory.cpp
+CPPFILES += utils/file_system.cpp
+CPPFILES += utils/images.cpp
+CPPFILES += utils/gui_events.cpp
+CPPFILES += utils/events.cpp
+CPPFILES += utils/controls.cpp
+CPPFILES += utils/screen.cpp
+CPPFILES += utils/exceptions.cpp
 CPPFILES += imgui_scrollable.cpp
-CPPFILES += ../$(BUILD)/libs/imgui_impl/switch/plat_switch.cpp
+CPPFILES += popup.cpp
+
 CPPFILES += ../$(BUILD)/libs/imgui/imgui.cpp
 CPPFILES += ../$(BUILD)/libs/imgui/imgui_draw.cpp
+CPPFILES += ../$(BUILD)/libs/imgui/imgui_tables.cpp
 CPPFILES += ../$(BUILD)/libs/imgui/imgui_widgets.cpp
 CPPFILES += ../$(BUILD)/libs/imgui/imgui_demo.cpp
-CPPFILES += ../$(BUILD)/libs/imgui_impl/switch/imgui_impl_glfw_switch.cpp
+
 CPPFILES += ../$(BUILD)/libs/imgui_impl/switch/imgui_impl_opengl3.cpp
+
 
 #---------------------------------------------------------------------------------
 # use CXX for linking C++ projects, CC for standard C
@@ -230,6 +252,7 @@ export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 			-I$(CURDIR)/$(BUILD)\
 			-I$(CURDIR)/$(SOURCES) \
 			-I$(CURDIR)/libs/imgui \
+			-I$(CURDIR)/libs/ImguiFileDialog \
 			-I$(CURDIR)/libs/imgui_impl/switch \
 			-I$(CURDIR)/libs/SDL2-2.0.12/include \
 			-I$(CURDIR)/$(SOURCES)/jzintv
@@ -289,6 +312,10 @@ $(BUILD):
 	cp libs/imgui_impl/switch/*.cpp $@/libs/imgui_impl/switch/
 	mkdir -p $@/libs/imgui/
 	cp libs/imgui/*.cpp $@/libs/imgui/
+	mkdir -p $@/libs/ImguiFileDialog/
+	cp libs/ImguiFileDialog/*.cpp $@/libs/ImguiFileDialog/
+	mkdir -p $@/utils/
+	cp src/main/cpp/utils/*.cpp $@/utils/
 	mkdir -p $@/jzintv/asm
 	mkdir -p $@/jzintv/avi
 	mkdir -p $@/jzintv/ay8910

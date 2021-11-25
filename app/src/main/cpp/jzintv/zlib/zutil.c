@@ -13,6 +13,7 @@
 struct internal_state      {int dummy;}; /* for buggy compilers */
 #endif
 
+#ifndef __SWITCH__
 z_const char * const z_errmsg[10] = {
 "need dictionary",     /* Z_NEED_DICT       2  */
 "stream end",          /* Z_STREAM_END      1  */
@@ -24,7 +25,7 @@ z_const char * const z_errmsg[10] = {
 "buffer error",        /* Z_BUF_ERROR     (-5) */
 "incompatible version",/* Z_VERSION_ERROR (-6) */
 ""};
-
+#endif
 
 const char * ZEXPORT zlibVersion()
 {
