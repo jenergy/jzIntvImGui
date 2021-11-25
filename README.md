@@ -38,6 +38,9 @@ A+B (combo)       --> 9
 Right Stick Left  --> Clear
 R3                --> 0
 Right Stick Right --> Enter
+-                 --> Reset
++                 --> Pause
++ + - (combo)     --> Quit game
 Left Stick        --> Disc (16 directions)
 Left Buttons      --> Disc (8 directions)
 ```
