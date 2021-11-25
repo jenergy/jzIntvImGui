@@ -436,7 +436,6 @@ static string save_controls_section(vector<Control *> *controlz, bool override) 
             resul2 << "\n";
 
             string genen = resul2.str();
-            const char *ggg = genen.c_str();
             resul_main << format_string(genen);
         }
     }
@@ -564,20 +563,6 @@ static void get_value_from_ini(char *line, char *buf) {
     } else {
         THROW_BY_STREAM("Wrong value!");
     }
-}
-
-static char *read_file_ini(char *ini_file) {
-    std::string output;
-    std::string myText;
-
-    std::ifstream MyReadFile(ini_file);
-
-    while (getline(MyReadFile, myText)) {
-        output.append(myText).append("\n");
-    }
-
-    MyReadFile.close();
-    return strdup(output.c_str());
 }
 
 static int get_custom_command_index(char *key) {
@@ -1036,14 +1021,12 @@ void LoadIniSettingsFromMemory(const char *ini_data, size_t ini_size) {
     char *const buf_end = buf + ini_size;
 
     uint32_t act_crc_32 = -1;
-    int control_position = -1;
     char section[100];
     char key[100];
     char value[5000]; // Enough ??
     char *line_end = NULL;
     struct rom_config_struct_t *act_rom_config = NULL;
     Control *act_control = NULL;
-    int min_malloc_size = MIN_MALLOC_SIZE;
     app_conf->num_total_crc32s = 0;
     bool skip_section = false;
     try {
@@ -1124,7 +1107,6 @@ void LoadIniSettingsFromMemory(const char *ini_data, size_t ini_size) {
                 }
             }
             catch (const std::stringstream &ex) {
-                char buf[1000];
                 ADD_CONFIG_WARNING(ex.str().c_str() << " at line '" << line << "'");
             }
         }

@@ -138,7 +138,6 @@ void sort_config_by_crc_32(vector<rom_config_struct_t> *vec) {
 }
 
 static void apply_default_settings() {
-    char buf[2048];
     int result;
     app_config_struct_t *app_conf = &app_config_struct;
 
@@ -416,7 +415,6 @@ static void load_roms(struct app_config_struct_t *app_conf, struct roms_list_str
         roms_config[i].available_status = ROM_AVAILABLE_STATUS_NOT_FOUND;
     }
 
-    int min_malloc_size = MIN_MALLOC_SIZE;
     vector<rom_config_struct_t> found_roms;
     struct dirent *Dirent;
     DIR *dir;
@@ -1250,7 +1248,6 @@ void Push_buttons_size(bool original) {
     ImGuiContext &g = *GImGui;
     ImVec2 old_fp = style.FramePadding;
     style.FramePadding.y = ((original ? app_config_struct.buttons_size : gui_util_str.backup.app_flags.buttons_size) - g.FontSize) / 2;
-    ImVec2 new_fp = style.FramePadding;
     frame_padding = old_fp;
 }
 

@@ -729,7 +729,6 @@ static void purge_duplicate_elements(vector<Control *> *parent, vector<Control *
 }
 
 void Control::print() {
-    const char *ee = original_event.c_str();
     Log(LOG_INFO) << "*********************************************";
     Log(LOG_INFO) << "original_event=" << original_event;
     Log(LOG_INFO) << "portrait_frect.x=" << portrait_frect.x;
@@ -765,7 +764,6 @@ static void save_changes_callback(void *val) {
     // 2: save game
     int save_val = *((int *) val);
     bool is_global = save_val == 1;
-    vector<Control *> *controls = nullptr;
     for (int hand_index = 0; hand_index < 2; hand_index++) {
         if (!is_global) {
             duplicate_controls(&(effective_game_controls[hand_index]), &(selected_rom->controls[hand_index]));
@@ -2020,7 +2018,6 @@ void normalize_controls_from_delta(int hand_index) {
     for (int j = 0; j < delta_default_controls[hand_index].size(); j++) {
         Control *delta_ref = delta_default_controls[hand_index][j];
         string event = delta_ref->original_event;
-        const char *control_event = event.c_str();
         for (int i = 0; i < app_config_struct.num_valid_crc32s; i++) {
             rom_config_struct_t &roms_config = roms_configuration[i];
             normalize_control_from_delta(event, roms_config.controls, hand_index, delta_ref);

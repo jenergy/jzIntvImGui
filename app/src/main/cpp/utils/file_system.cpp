@@ -267,7 +267,6 @@ int openfilename(const char *initial_folder, char *selected, char **filter_descr
 #include <ImGuiFileDialog.h>
 int browse_folder(const char *initial_folder, char *selected) {
     int res = 1;
-    ImGuiFileDialogFlags flags;
     string init_folder = initial_folder;
     init_folder.append("/");
     ImGuiFileDialog::Instance()->OpenModal("ChooseDlgKey", "Choose Folder", NULL, init_folder);
@@ -277,7 +276,6 @@ int browse_folder(const char *initial_folder, char *selected) {
 int openfilename(const char *initial_folder, char *selected, char **filter_descriptions, char **filter_extensions, int numFilters) {
     int res = 1;
 
-    ImGuiFileDialogFlags flags;
     string init_folder = initial_folder;
     init_folder.append("/");
     string filters = "";

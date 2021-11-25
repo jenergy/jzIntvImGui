@@ -206,7 +206,6 @@ static void send_linux_fake_event() {
 }
 
 void manage_key_pressed_main(bool any_popup_visible) {
-    ImGuiIO &io = ImGui::GetIO();
     static int last_char = 0;
     static bool last_char_released = true;
     last_char_released = last_char == 0 || !ImGui::IsKeyDown(last_char);

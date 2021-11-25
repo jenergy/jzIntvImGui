@@ -1,6 +1,6 @@
 #include "main.h"
 
-bool screen_is_portrait;
+bool screen_is_portrait = false;
 int window_x = 0;
 int window_y = 0;
 float window_ratio_portrait;
@@ -178,14 +178,3 @@ extern "C" void check_screen_change() {
         update_screen_size();
     }
 }
-
-//extern void change_screen_orientation(int wind_x, int wind_y) {
-//    int max_ = max(wind_x, wind_y);
-//    int min_ = min(wind_x, wind_y);
-//    if (wind_x > wind_y) {
-//        update_screen_orientation(max_, min_);
-//    } else {
-//        update_screen_orientation(min_, max_);
-//    }
-//    update_screen_size();
-//}

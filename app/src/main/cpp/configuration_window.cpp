@@ -875,8 +875,6 @@ static void draw_select_item(char *reference,
 }
 
 static void show_general_data() {
-    ImGuiWindow *cur_child = ImGui::GetCurrentWindowRead();
-    ImVec2 child_size = cur_child->Size;
     int pos_y = 0;
     draw_section(INTERFACE_OPTIONS_SECTION_NAME, darkcian_col, 0, true, &pos_y);
     draw_section(JZINTV_OPTIONS_SECTION_NAME, darkcian_col, 0, true, &pos_y);
@@ -1898,9 +1896,7 @@ void show_configuration_window(bool *refresh_for_text) {
 }
 
 void manage_key_pressed_config() {
-    ImGuiIO &io = ImGui::GetIO();
     static ostringstream oss;
-    static long start_millis = 0;
     static int last_char = 0;
     static bool last_char_released = true;
 

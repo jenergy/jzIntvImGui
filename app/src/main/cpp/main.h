@@ -51,7 +51,6 @@
 #define RESET_CUSTOM_CONTROLS "Reset controls to default"
 #define FULLSCREEN_TEXT "Fullscreen"
 #define SHOW_DEAR_IMGUI_DEMO_TEXT "Show Dear ImGui demo"
-#define MIN_MALLOC_SIZE 100
 #define ROM_AVAILABLE_STATUS_NOT_FOUND 0 // Red
 #define ROM_AVAILABLE_STATUS_FOUND 1     // Green
 #define ROM_AVAILABLE_STATUS_UNKNOWN 2   // Yellow
@@ -70,8 +69,6 @@
 #define BEFORE_EMULATION 1
 #define AFTER_EMULATION 2
 #define EXITING 3
-
-static int start_gui();
 
 #define NUM_PIXELS_BEFORE_SECTION_NAME 20
 #define NUM_PIXELS_SPACE_SECTION_NAME 5

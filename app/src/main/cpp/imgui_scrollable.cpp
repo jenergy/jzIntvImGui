@@ -27,22 +27,6 @@ ImguiScrollable::ImguiScrollable() : window(NULL),
 
 ImguiScrollable::~ImguiScrollable() {}
 
-static int compute_end_drag_position(ImGuiWindow *window, float last_mouse_pos, int first, int last) {
-    int tot_elements_viewed = last - first;
-    int px_for_element = window->Size.y / tot_elements_viewed;
-    int relative_position_mouse = last_mouse_pos - window->Pos.y;
-    int relative_position_element = relative_position_mouse / px_for_element;
-    return relative_position_element;
-}
-
-static int diff(int num1, int num2) {
-    int res = num1 - num2;
-    if (res < 0) {
-        res = -res;
-    }
-    return res;
-}
-
 static int diff_float(float num1, float num2) {
     float res = num1 - num2;
     if (res < 0) {

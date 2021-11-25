@@ -115,7 +115,7 @@ static bool is_pause_event(SDL_Event *event, const event_num_t event_num[2], boo
 }
 
 extern "C" bool check_pause_event(SDL_Event *event, const event_num_t event_num[2], bool may_combo) {
-    bool send;
+    bool send = false;
     if (is_pause_event(event, event_num, may_combo, &send)) {
         if (send) {
             custom_pause_event();
