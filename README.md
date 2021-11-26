@@ -38,6 +38,9 @@ A+B (combo)       --> 9
 Right Stick Left  --> Clear
 R3                --> 0
 Right Stick Right --> Enter
+L or R            --> Side button top
+ZL                --> Side button left
+ZR                --> Side button right
 -                 --> Reset
 +                 --> Pause
 + + - (combo)     --> Quit game
