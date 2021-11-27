@@ -8,8 +8,7 @@ A port of jzIntvImGui exists for:
 - Windows
 - Linux
 - Android
-
-An old version also exists for (modded) Nintendo Switch, the update to the latest version is in development.
+- [Nintendo Switch](https://github.com/jenergy/jzIntvImGui/tree/Nintendo_Switch)
 
 This is the main interface Window, showing the list of games.
 
@@ -192,20 +191,24 @@ If you want to have the same behaviour also for the other layout, repeat with 'R
 -------------------------
 # Execution notes
 
+-------------------
 #### Windows
 Provided "bin" folder contains all the needed files. The "Microsoft Visual C++ Redistributable per Visual Studio x86" package must be installed (https://visualstudio.microsoft.com/it/downloads/)
 
+-------------------
 #### Linux
 jzIntvImGui needs libSDL2 to be executed. In my Debian GNU/Linux distro, I need to install them (as superUser) with commands:
 
      sudo apt-get --assume-yes update 
      sudo apt-get --assume-yes install libsdl2-image-2.0-0
 
+-------------------
 #### Android
 Just install the apk file in "bin" folder 
 
-#### Nintendo Switch (Actually broken)
-Provided "bin" folder contains all the needed files. 
+-------------------
+#### Nintendo Switch
+[See here](https://github.com/jenergy/jzIntvImGui/tree/Nintendo_Switch#execution-notes)
 
 -------------------------
 # Development notes
@@ -288,51 +291,30 @@ Once all is OK, AT YOUR OWN RISK you can try to update versions of plugins, ndk,
 ...but I had a bad time on it :neutral_face:
  
 -------------------
-#### Nintendo Switch (Actually broken)
-The compilation is done using docker container devkita64
-- Install docker (see https://www.docker.com/)
-- Install and run docker image for Nintendo Switch (see https://hub.docker.com/r/devkitpro/devkita64)
-  In Windows, command is: 
-    ##### 'docker run --rm --interactive --tty -v <local folder>:<mount folder> devkitpro/devkita64 bash'
-    Example: (provided in file dockerSwitch.bat)
-                  
-    ##### 'docker run --rm --interactive --tty -v d:/DockerShare/Progetti:/progetti devkitpro/devkita64 bash'
-                  
-- Once container is up and running and you have the prompt, update libs with command:
+#### Nintendo Switch
+[See here](https://github.com/jenergy/jzIntvImGui/tree/Nintendo_Switch#development-notes)
 
-    ##### 'sudo dkp-pacman -Syu'
-                  
-- Move to mount folder and compile:
-    ##### 'cd /progetti/jzIntvImgui'
-    ##### 'make -f Makefile.switch'
-                  
-    To clean:
-                  
-    ##### 'make -f Makefile.switch clean'
-
------------------
+-------------------
 # Next Steps (hope soon)
-- Fix compilation for Nintendo Switch
 - Add Overlays support
 - On Windows, use ImguiFileDialog to select folders/files instead of Microsoft dialogs
 
------------------
+-------------------
 # Next Steps (somewhere, maybe, in the future)
 #### Nintendo Switch
- - Manage the "Home" key in order to make jzIntv automatically pause
- - Understand why Dear Imgui cannot recognize ZR, R, ZL and L buttons
+ - Fix and merge [Nintendo Switch branch](https://github.com/jenergy/jzIntvImGui/tree/Nintendo_Switch) in main branch
 #### Desktop (Windows and Linux)
  - Add option to launch an external jzIntv instead of the embedded one
 #### All
  - Capture jzIntv output
  
------------------
+-------------------
 # Known issues
 
 Dear ImGui actually does not support word wrap in multiline text fields. So I implemented my version (https://github.com/ocornut/imgui/issues/3237#issuecomment-835876480) 
 <br/> But if you have font size too big, the computation in landscape mode is VERY slow. I don't think I will fix it, I hope that one day word wrap will be implemented in Dear Imgui :roll_eyes:
 
------------------
+-------------------
 # Thanks to:
 
 ###### jzIntv http://spatula-city.org/~im14u2c/intv/
@@ -349,7 +331,7 @@ Dear ImGui actually does not support word wrap in multiline text fields. So I im
 ###### Emanuele Zangara for creation of terrific configurations buttons and disc button too emanuele.zangara@yahoo.it
 ###### Zendocon for his support, suggestions and test https://atariage.com/forums/profile/31886-zendocon/
 
------------------
+-------------------
 ### ChangeLog:
 
 ###### 27/08/2020 1.0.0 - First release: compilation with jzIntv sources jzintv-20200712
