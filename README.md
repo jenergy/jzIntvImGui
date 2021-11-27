@@ -63,7 +63,7 @@ The compilation is done using docker container devkita64
 
 Example:
 ```
-   docker run --rm --interactive --tty -v d:/DockerShare/Progetti:/progetti devkitpro/devkita64 bash'
+   docker run --rm --interactive --tty -v d:/DockerShare/Progetti:/progetti devkitpro/devkita64 bash
 ```
 
 Once container is up and running and you have the prompt, update libs with command:
@@ -81,7 +81,6 @@ To clean:
 ```
  make -f Makefile.switch clean
  ```
-
 
 <br/><br/>
 Have fun! <br/>
