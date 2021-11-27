@@ -12,10 +12,10 @@ Emulation is already perfect, while interface has little issues to be fixed:
 - Fix soft keyboard management: keyboard appears but input is not recognized
 - Fix home button management in emulation, in order to automatically pause game in progress
 - Make physical keyboards work
+
 -------------------------
 # Execution notes
 
-#### Nintendo Switch
 - Copy "bin" folder and all its content in a subdirectory of directory "switch" in the root of SD 
 - Copy all your roms and bioses in the "resources/Roms" subfolder
 - If you wish to have your app in home, you can install provided nsp, it points to sdmc:/switch/jzIntvImGui/jzIntvImGui.nro
@@ -49,6 +49,31 @@ Left Buttons      --> Disc (8 directions)
 ```
 
 Other hackfile are provided, you can choose them in "Options" mask (use touchPad)
+
+-------------------------
+# Development notes
+
+The compilation is done using docker container devkita64
+- Install docker (see https://www.docker.com/)
+- Install and run docker image for Nintendo Switch (see https://hub.docker.com/r/devkitpro/devkita64)
+  In Windows, command is: 
+    ##### 'docker run --rm --interactive --tty -v <local folder>:<mount folder> devkitpro/devkita64 bash'
+    Example: (provided in file dockerSwitch.bat)
+                  
+    ##### 'docker run --rm --interactive --tty -v d:/DockerShare/Progetti:/progetti devkitpro/devkita64 bash'
+                  
+- Once container is up and running and you have the prompt, update libs with command:
+
+    ##### 'sudo dkp-pacman -Syu'
+                  
+- Move to mount folder and compile:
+    ##### 'cd /progetti/jzIntvImgui/app'
+    ##### 'make -f Makefile.switch'
+                  
+    To clean:
+                  
+    ##### 'make -f Makefile.switch clean'
+
 
 <br/><br/>
 Have fun! <br/>
