@@ -57,22 +57,30 @@ The compilation is done using docker container devkita64
 - Install docker (see https://www.docker.com/)
 - Install and run docker image for Nintendo Switch (see https://hub.docker.com/r/devkitpro/devkita64)
   In Windows, command is: 
-    ##### 'docker run --rm --interactive --tty -v <local folder>:<mount folder> devkitpro/devkita64 bash'
-    Example: (provided in file dockerSwitch.bat)
-                  
-    ##### 'docker run --rm --interactive --tty -v d:/DockerShare/Progetti:/progetti devkitpro/devkita64 bash'
-                  
-- Once container is up and running and you have the prompt, update libs with command:
+```
+   docker run --rm --interactive --tty -v <local folder>:<mount folder> devkitpro/devkita64 bash
+```
 
-    ##### 'sudo dkp-pacman -Syu'
+Example:
+```
+   docker run --rm --interactive --tty -v d:/DockerShare/Progetti:/progetti devkitpro/devkita64 bash'
+```
+
+Once container is up and running and you have the prompt, update libs with command:
+```
+   sudo dkp-pacman -Syu
+```
                   
-- Move to mount folder and compile:
-    ##### 'cd /progetti/jzIntvImgui/app'
-    ##### 'make -f Makefile.switch'
+Move to mount folder and compile:
+```
+    cd /progetti/jzIntvImgui/app
+    make -f Makefile.switch
+```
                   
-    To clean:
-                  
-    ##### 'make -f Makefile.switch clean'
+To clean:
+```
+ make -f Makefile.switch clean
+ ```
 
 
 <br/><br/>
