@@ -14,6 +14,8 @@ apt --assume-yes autoremove
 #snap install clion --classic
 #snap run clion &
 
-export CLION_FOLDER="<PATH TO CLION>"
-"$CLION_FOLDER"/bin/clion.sh &
+#export CLION_FOLDER="<PATH TO CLION>"
+#"$CLION_FOLDER"/bin/clion.sh &
 
+#sudo ln /lib/x86_64-linux-gnu/libreadline.so.7 /lib/x86_64-linux-gnu/libreadline.so.6
+#sudo ln /lib/x86_64-linux-gnu/libncurses.so.6 /lib/x86_64-linux-gnu/libncurses.so.5

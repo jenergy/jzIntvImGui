@@ -310,7 +310,7 @@ static ini_option_t ini_options_general[] =
                 {MOBILE_SHOW_CONTROLS_OPTION,                   BOOL_T,           NULL, NULL},
                 {MOBILE_SHOW_CONFIGURATION_CONTROLS_OPTION,     BOOL_T,           NULL, NULL},
                 {MOBILE_USE_INVERTED_CONTROLS_OPTION,           BOOL_T,           NULL, NULL},
-                {"DUMMY",                                       BOOL_T,           condition_bool_dummy, NULL},
+                {USE_EXTERNAL_JZINTV_OPTION,                    BOOL_T,           NULL, NULL},
                 {"DUMMY",                                       BOOL_T,           condition_bool_dummy, NULL},
                 {ROMS_LIST_WIDTH_PERCENTAGE_OPTION,             DOUBLE_T,         NULL, NULL},
                 {IMAGE_HEIGHT_PERCENTAGE_OPTION,                DOUBLE_T,         NULL, NULL},
@@ -697,6 +697,8 @@ static bool set_general_value(char *key, char *value, struct app_config_struct_t
         app_conf->mobile_show_configuration_controls = string_to_bool(value);
     } else if (!strcmp(key, JZINTV_FULLSCREEN_OPTION)) {
         app_conf->jzintv_fullscreen = string_to_bool(value);
+    } else if (!strcmp(key, USE_EXTERNAL_JZINTV_OPTION)) {
+        app_conf->use_external_jzintv = string_to_bool(value);
     } else if (!strcmp(key, MOBILE_USE_INVERTED_CONTROLS_OPTION)) {
         app_conf->mobile_use_inverted_controls = string_to_bool(value);
     } else if (!strcmp(key, MOBILE_DEFAULT_PORTRAIT_CONTROLS_SIZE_OPTION)) {
@@ -956,6 +958,11 @@ static void fix_incompatible_options() {
     if (!app_config_struct.jzintv_fullscreen && get_force_fullscreen()) {
 //        ADD_POPUP("Wrong configuration", "Fixed wrong configuration for flag 'jzintv_fullscreen' ");
         app_config_struct.jzintv_fullscreen = true;
+    }
+
+    if (app_config_struct.use_external_jzintv && !can_launch_external_jzintv()) {
+//        ADD_POPUP("Wrong configuration", "Fixed wrong configuration for flag 'jzintv_fullscreen' ");
+        app_config_struct.use_external_jzintv = false;
     }
 }
 

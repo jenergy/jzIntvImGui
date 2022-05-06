@@ -807,7 +807,7 @@ static void draw_left_child() {
                             submit_gui_event(PREPARE_FOR_LAUNCH_GAME_EVENT, gui_util_str.rom_index_selected, 0);
                         }
                     } else {
-                        ADD_POPUP("Bios not found", "Unable to start, at least one bios not found in roms path");
+                        ADD_POPUP("Bios not found", "Unable to start, at least one mandatory bios (exec.bin and grom.bin) not found in roms path.");
                     }
                 }
             }

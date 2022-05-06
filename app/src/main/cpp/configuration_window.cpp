@@ -6,8 +6,8 @@ extern void request_for_scroll(int mode);
 
 extern gui_util_struct_t gui_util_str;
 
-bool old_held[3] = {false, false, false};
-bool new_held[3] = {false, false, false};
+bool old_held[5] = {false, false, false, false, false};
+bool new_held[5] = {false, false, false, false, false};
 
 static bool is_in_folder(string full_file_path, const char *folder) {
     bool res = false;
@@ -217,8 +217,6 @@ static bool clickableTextUrl(const char *label, const char *url, ImVec4 vColor, 
 
 static void add_section_info_thanks(string title, string description, string url, bool border, int index) {
     ImVec4 col = {0, 120, 20, 140};
-    string tot_title = title;
-    tot_title.append("_info");
 
     if (border) {
         ImGui::Separator();
@@ -300,9 +298,13 @@ static void show_info_and_thanks() {
     add_section_info_thanks(libsdlTitle, libsdlDesc, LIBSDL2_URL, false, 2);
     ImGui::TextWrapped("%s\n", "");
 
-    add_section_info_thanks("", "Thanks to my friend Emanuele Zangara for creation of terrific configurations buttons and disc button too (emanuele.zangara@yahoo.it)", "", false, -1);
+    add_section_info_thanks("Zendocon", "For his support, suggestions and tests for android port, images and much more!", ZENDOCON_URL, false, 3);
+    ImGui::TextWrapped("%s\n", "");
 
-    add_section_info_thanks("", "And thanks to Zendocon for his support, suggestions and test!", ZENDOCON_URL, false, -1);
+    add_section_info_thanks("larryvgs", "For his support, suggestions and tests for Windows / Amazon fire sticks ports!", LARRYVGS_URL, false, 4);
+    ImGui::TextWrapped("%s\n", "");
+
+    add_section_info_thanks("Emanuele Zangara", "For creation of terrific configurations buttons and disc button too\nemanuele.zangara@yahoo.it", "",false, 5);
 
 //    show_messages(&roms_list_struct);
 }
@@ -1025,6 +1027,9 @@ static void draw_section_content(string section, int start_x, int end_x, int zin
                 draw_scalar_64(&gui_util_str.backup.app_flags.mobile_default_landscape_controls_size, "Landscape controls size", start_x, end_x, res, 1, 4);
             }
 
+            if (can_launch_external_jzintv()) {
+                draw_checkbox(&gui_util_str.backup.app_flags.use_external_jzintv, USE_EXTERNAL_JZINTV_TEXT, start_x, end_x, res);
+            }
             if (!get_force_fullscreen()) {
                 draw_checkbox(&gui_util_str.backup.app_flags.jzintv_fullscreen, FULLSCREEN_TEXT, start_x, end_x, res);
             }
@@ -1256,6 +1261,7 @@ void reset_backup_data() {
     gui_util_str.backup.app_flags.mobile_show_controls = app_config_struct.mobile_show_controls;
     gui_util_str.backup.app_flags.mobile_show_configuration_controls = app_config_struct.mobile_show_configuration_controls;
     gui_util_str.backup.app_flags.jzintv_fullscreen = app_config_struct.jzintv_fullscreen;
+    gui_util_str.backup.app_flags.use_external_jzintv = app_config_struct.use_external_jzintv;
     gui_util_str.backup.app_flags.mobile_portrait_top_gap_percentage = app_config_struct.mobile_portrait_top_gap_percentage;
     gui_util_str.backup.app_flags.mobile_portrait_bottom_gap_percentage = app_config_struct.mobile_portrait_bottom_gap_percentage;
     gui_util_str.backup.app_flags.mobile_landscape_right_gap_percentage = app_config_struct.mobile_landscape_right_gap_percentage;
@@ -1451,6 +1457,7 @@ static bool manage_backup_data_on_save(bool *refresh_for_text) {
     app_config_struct.mobile_show_controls = gui_util_str.backup.app_flags.mobile_show_controls;
     app_config_struct.mobile_show_configuration_controls = gui_util_str.backup.app_flags.mobile_show_configuration_controls;
     app_config_struct.jzintv_fullscreen = gui_util_str.backup.app_flags.jzintv_fullscreen;
+    app_config_struct.use_external_jzintv = gui_util_str.backup.app_flags.use_external_jzintv;
 
     // Mobile gaps
     res |= gui_util_str.backup.app_flags.mobile_portrait_top_gap_percentage != app_config_struct.mobile_portrait_top_gap_percentage;

@@ -33,10 +33,11 @@
 #include <sys/stat.h>
 #endif
 
-#define VERSION "2.3.3"
+#define VERSION "2.3.7"
 #define EMBEDDED_JZINTV_VERSION "jzintv-20200712"
 #define JZINTV_URL "http://spatula-city.org/~im14u2c/intv/"
 #define ZENDOCON_URL "https://atariage.com/forums/profile/31886-zendocon/"
+#define LARRYVGS_URL "https://atariage.com/forums/profile/79111-larryvgs/"
 #define DEAR_IMGUI_VERSION "1.84"
 #define DEAR_IMGUI_URL "https://github.com/ocornut/imgui"
 #define LIBSDL2_VERSION "2.0.12"
@@ -50,6 +51,7 @@
 #define SHOW_CONFIGURATION_CONTROLS_TEXT "Show configuration controls"
 #define RESET_CUSTOM_CONTROLS "Reset controls to default"
 #define FULLSCREEN_TEXT "Fullscreen"
+#define USE_EXTERNAL_JZINTV_TEXT "Use external jzIntv"
 #define SHOW_DEAR_IMGUI_DEMO_TEXT "Show Dear ImGui demo"
 #define ROM_AVAILABLE_STATUS_NOT_FOUND 0 // Red
 #define ROM_AVAILABLE_STATUS_FOUND 1     // Green
@@ -58,7 +60,7 @@
 #define NO_GAME_IMAGE_Y 300
 #define STB_IMAGE_IMPLEMENTATION
 #define WRONG_FONT_TITLE "Wrong font"
-#define ADD_JZINTV_COMMAND(x, y) {std::stringstream command_variable; std::cout << y << std::endl; add_jzintv_command(x, command_variable << y);}
+#define ADD_JZINTV_COMMAND(list, opt, optspace, argument, isargumentpath) {std::stringstream command_variable; add_jzintv_command(list, opt, optspace, command_variable << argument, isargumentpath);}
 
 #define USE_CURRENT_ROM_INDEX -1
 #define GO_EXACTLY_AT_THIS_POSITION -2
@@ -128,8 +130,8 @@ struct app_config_struct_t {
     bool mobile_show_controls;
     bool mobile_show_configuration_controls;
     bool mobile_use_inverted_controls;
+    bool use_external_jzintv;
     // To align memory pointer for saving ini (really sad)
-    bool dummy1;
     bool dummy2;
     double roms_list_width_percentage;
     double image_height_percentage;
@@ -148,8 +150,8 @@ struct app_config_struct_t {
     SDL_FRect mobile_landscape_rect;
 
     // Technical members
-    char *root_folder_for_configuration; // Fixed
-    char *resource_folder_absolute_path; // Fixed
+    char *root_folder_for_configuration; // Not dynamic
+    char *resource_folder_absolute_path; // Not dynamic
     char *internal_sd_path; // Fixed
     char *external_sd_path; // Fixed
     char *roms_folder_absolute_path; // Variable
@@ -407,6 +409,7 @@ extern bool get_mobile_mode();
 extern bool get_default_mobile_show_controls();
 extern bool get_default_mobile_show_configuration_controls();
 extern bool get_force_fullscreen();
+extern bool can_launch_external_jzintv();
 extern SDL_FRect get_default_jzintv_rendering_frect(bool is_portrait);
 extern char *get_root_folder_for_configuration();
 extern void init_platform(int argc, char **argv);
@@ -468,6 +471,8 @@ extern bool exist_folder(string pathname);
 extern char *get_file_name(string pathname);
 extern bool copy_file(string source, string destination);
 extern std::string browse_item(std::string saved_path, const char *restore, bool directory, char **filter_descriptions = NULL, char **filter_extensions = NULL, int numFilters = 0);
+extern std::string exec(const char* cmd);
+extern std::string get_formatted_path(const char* path, bool keep_final_slash = false);
 
 // Images
 extern void load_images(struct app_config_struct_t *app_conf);

@@ -87,6 +87,7 @@
 #define CONTROL_OVERRIDE_EVENT_OPTION "control_override_event"
 
 #define JZINTV_FULLSCREEN_OPTION "jzintv_fullscreen"
+#define USE_EXTERNAL_JZINTV_OPTION "external_jzintv"
 #define CONTROL_PORTRAIT_S_PERC_OPTION "control_portrait_s_perc"
 #define CONTROL_LANDSCAPE_S_PERC_OPTION "control_landscape_s_perc"
 

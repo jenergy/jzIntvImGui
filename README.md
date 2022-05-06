@@ -30,8 +30,9 @@ While in portrait mode you'll have only the list of games
 
 Obviously, you have to choose the folder containing roms (and bioses) of your collection. By default, the program will search them in the "Roms" folder located in the resources folder, but you can change it by browsing your file system.
 You can change this and other configurations in the "General options" section
+![image](https://user-images.githubusercontent.com/57037540/167163743-79e2f43b-1768-48ec-b872-3dd370688c8e.png)
 
-![image](https://user-images.githubusercontent.com/57037540/140431850-5ce3c31a-d7c7-4f25-9252-c79e28a9ab1e.png)
+For Desktop ports (Windows and Linux), you can choose to use an external jzIntv instead of the embedded one. It must be located in the same path of the application, and executable must be called "jzintv.exe" for Windows (case insensitive) and "jzintv" for Linux (case sensitive)
 
 You can also configure single-game Options:
 
@@ -193,7 +194,7 @@ If you want to have the same behaviour also for the other layout, repeat with 'R
 
 -------------------
 #### Windows
-Provided "bin" folder contains all the needed files. The "Microsoft Visual C++ Redistributable per Visual Studio x86" package must be installed (https://visualstudio.microsoft.com/it/downloads/)
+Provided "bin" folder contains all the needed files. The "Microsoft Visual C++ Redistributable per Visual Studio x86" package must be installed (https://docs.microsoft.com/it-it/cpp/windows/latest-supported-vc-redist?view=msvc-170)
 
 -------------------
 #### Linux
@@ -216,9 +217,9 @@ jzIntvImGui is a CMake project. For both Windows and Linux I use jetbrains CLion
 
 -------------------
 #### Windows
-- Install MINIMAL Mingw (https://sourceforge.net/projects/mingw/). Select mingw32-base, mingw32-gcc-g++ (be sure that mingw32-make is selected) then click on "Apply Changes"
+- Install MINIMAL Mingw (https://sourceforge.net/projects/mingw/). Select and mark for installation mingw32-base and mingw32-gcc-g++. Then, by clicking on "All Packages" be sure that mingw32-make is selected. Then click on "Apply Changes" on "Installation" menu item.
 - Install/Download CLion and open project by selecting "jzIntvImGui" folder
-
+- To check that all is ok, when project is open click on File --> Settings --> Build, Execution, Deployment --> Toolchains and in Toolset be sure that your Mingw installation in selected
 -------------------
 #### Linux
 - Install packages
@@ -228,7 +229,8 @@ jzIntvImGui is a CMake project. For both Windows and Linux I use jetbrains CLion
      ```
 
 - Install/Download CLion and open project by selecting "jzIntvImGui" folder
-                                   
+-------------------
+####                          
 Once project is open in Clion (Both Windows and Linux):
 - Right click on app/src/main/cpp/CmakeLists.txt and choose "Load CMake project"
 - Force build directory to app/bin (File --> Settings --> Build, Execution, Deployment --> Cmake --> Build Directory)
@@ -278,7 +280,7 @@ Now (Both Intellij ULTIMATE and Android Studio):
           - Build Tools Version 30.0.2
         - Default Config:
           - Target SDK Version 29
-          - Min SDK Version 26
+          - Min SDK Version 22
   - File --> Settings --> Build, Execution, Deployment --> Build Tools --> Gradle
       - Build and run using: Gradle
       - Run Tests using: Gradle
@@ -303,8 +305,6 @@ Once all is OK, AT YOUR OWN RISK you can try to update versions of plugins, ndk,
 # Next Steps (somewhere, maybe, in the future)
 #### Nintendo Switch
  - Fix and merge [Nintendo Switch branch](https://github.com/jenergy/jzIntvImGui/tree/Nintendo_Switch) in main branch
-#### Desktop (Windows and Linux)
- - Add option to launch an external jzIntv instead of the embedded one
 #### All
  - Capture jzIntv output
  
@@ -317,7 +317,7 @@ Dear ImGui actually does not support word wrap in multiline text fields. So I im
 -------------------
 # Thanks to:
 
-###### jzIntv http://spatula-city.org/~im14u2c/intv/
+###### Joe Zbiciak and his jzIntv http://spatula-city.org/~im14u2c/intv/
 ###### Dear ImGui https://github.com/ocornut/imgui
 ###### CLion project https://github.com/joelcancela/ImguiDemoCLion
 ###### Switch imgui glfw https://github.com/MstrVLT/switch_imgui_glfw
@@ -329,7 +329,8 @@ Dear ImGui actually does not support word wrap in multiline text fields. So I im
 ###### Nativefiledialog-extended https://github.com/btzy/nativefiledialog-extended
 ###### ImguiFileDialog https://github.com/aiekick/ImGuiFileDialog
 ###### Emanuele Zangara for creation of terrific configurations buttons and disc button too emanuele.zangara@yahoo.it
-###### Zendocon for his support, suggestions and test https://atariage.com/forums/profile/31886-zendocon/
+###### Zendocon for support, suggestions and tests https://atariage.com/forums/profile/31886-zendocon/
+###### larryvgs for support, suggestions and tests https://atariage.com/forums/profile/79111-larryvgs/
 
 -------------------
 ### ChangeLog:
@@ -340,7 +341,7 @@ Dear ImGui actually does not support word wrap in multiline text fields. So I im
 ###### 05/10/2021 2.2.0 - First android release
 ###### 05/11/2021 2.2.6 - Stable version (Thanks Zendocon for your tests in intermediate releases)
 ###### 20/11/2021 2.3.2 - Android usb management + jzIntv fix crash on launching a non JLP game after a JLP game
-
+###### 06/05/2022 2.3.7 - Bugfix for Pause button not working<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Added external jzIntv management<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Decreased minSDk Android version to 22, for Amazon Fire Stick devices<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Added icon to Windows executable<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Thanks larryvgs for motivating me to do everything, and for testing :blush:) 
 <br/><br/>
 Have fun! <br/>
 ###### Daniele Moglia (jenergy@tiscali.it)

@@ -285,6 +285,10 @@ bool get_force_fullscreen() {
     return true;
 }
 
+bool can_launch_external_jzintv() {
+    return false;
+}
+
 char* get_forced_resolution_argument() {
     return strdup("-z3");
 }

@@ -57,9 +57,9 @@ static void fake_osd(uint8_t*, uint32_t);
  */
 static char * release(void)
 {
-    static char buf[16];
+    static char buf[30];
 
-    snprintf(buf, 16, "%d.%d", JZINTV_VERSION_MAJOR, JZINTV_VERSION_MINOR);
+    snprintf(buf, 30, "%s", "jzintv-20200712\0");
 
     return buf;
 }
@@ -391,7 +391,7 @@ reload:
         fprintf(stderr, "r = \'%s\', len = %d\n", r, (int)strlen(r));
         fprintf(stderr, "n = \'%s\', len = %d\n", n, (int)strlen(n));
         */
-        snprintf(title, 128, "jzintv %.32s : %.64s", r, n);
+        snprintf(title, 128, "jzintv mod from official %.32s : %.64s", r, n);
         title[127] = 0;
         /*
         fprintf(stderr, "t = \'%s\', len = %d\n", title, (int)strlen(title));

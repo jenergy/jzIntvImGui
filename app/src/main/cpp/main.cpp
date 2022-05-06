@@ -38,6 +38,12 @@ Copyright 2021 Daniele Moglia
 // Nativefiledialog-extended https://github.com/btzy/nativefiledialog-extended
 // Imgui File dialog https://github.com/aiekick/ImGuiFileDialog
 
+// TODO
+// Eliminare gestione override dei controlli, delle funzionalità dei controlli, delle immagini dei controlli (anche da github rimuovere il pezzo di Indy)
+// Eliminare gestione delta dei controlli, ci sarà global che salva tutto, esplicito (e se non c'è, si prende il default), e distintamente, singolo gioco salvato, che salverà TUTTO lo stato del gioco, non solo il delta (tanto poi dalle options si può resettare)
+// Aggiungere gestione esplicita move&shoot con boolean, da gestire poi a codice per i singoli giochi, rimuovere quindi da ini
+// Gestione 'esporta config giochi' e 'importa config giochi', sia per singolo gioco che per tutti i giochi. Per mobile ogni volta che parte l'app si verifica se c'è questo file aggiuntivo, se non è stato importato si chiede se importarlo.
+
 #include "main.h"
 #include "includes_specific.h"
 
@@ -202,6 +208,7 @@ static void apply_default_settings() {
     app_conf->mobile_default_portrait_controls_size = 4;
     app_conf->mobile_default_landscape_controls_size = 2;
     app_conf->jzintv_fullscreen = false;
+    app_conf->use_external_jzintv = false;
     app_conf->mobile_use_inverted_controls = false;
     app_conf->act_player = 0;
 
@@ -768,18 +775,28 @@ static void add_style() {
     apply_style();
 }
 
-static void add_jzintv_command(vector<string> *commands_list, std::basic_ostream<char, std::char_traits<char>> &ostream) {
+static void add_jzintv_command(vector<string> *commands_list, const char* option, bool option_needs_space, std::basic_ostream<char, std::char_traits<char>> &argument, bool is_argument_path) {
     std::stringstream ss;
-    ss << ostream.rdbuf();
-    string command = ss.str();
-    char *formatted;
-#ifdef WIN32
-    formatted = replaceWord(command.c_str(), "/", "\\");
-#else
-    formatted = strdup(command.c_str());
-#endif
-    commands_list->push_back(formatted);
-    free(formatted);
+    ss << argument.rdbuf();
+    string argument_str = ss.str();
+    string final_command="";
+    if (option != NULL && strcmp(option, "")) {
+        final_command.append(option);
+    }
+    if (option_needs_space) {
+        final_command.append(" ");
+    }
+
+    if (strcmp(argument_str.c_str(), "")) {
+        string final_argument = argument_str.c_str();
+        if (is_argument_path) {
+            final_argument = get_formatted_path(argument_str.c_str());
+        }
+        final_command.append(final_argument);
+    }
+
+    std::cout << final_command.c_str() << std::endl;
+    commands_list->push_back(final_command.c_str());
 }
 
 static bool check_file_presence(const char *main_message, char *fileName) {
@@ -986,22 +1003,31 @@ bool start_emulation(int index) {
         return false;
     }
 
-    ADD_JZINTV_COMMAND(&commands, "jzintv");
+    ADD_JZINTV_COMMAND(&commands, "jzintv", false, "", false);
     if (roms_list_struct.list[index].use_tutorvision_gram) {
-        ADD_JZINTV_COMMAND(&commands, "-G2");
+        ADD_JZINTV_COMMAND(&commands, "-G2", false, "", false);
     }
-    ADD_JZINTV_COMMAND(&commands, "-p" << app_config_struct.roms_folder_absolute_path);
-    ADD_JZINTV_COMMAND(&commands, "-e" << app_config_struct.roms_folder_absolute_path << execBinFileName);
-    ADD_JZINTV_COMMAND(&commands, "-g" << app_config_struct.roms_folder_absolute_path << gromBinFileName);
+    ADD_JZINTV_COMMAND(&commands, "-p", app_config_struct.use_external_jzintv, app_config_struct.roms_folder_absolute_path, true);
+    ADD_JZINTV_COMMAND(&commands, "-e", app_config_struct.use_external_jzintv, app_config_struct.roms_folder_absolute_path << execBinFileName, true);
+    ADD_JZINTV_COMMAND(&commands, "-g", app_config_struct.use_external_jzintv, app_config_struct.roms_folder_absolute_path << gromBinFileName, true);
 
     ostringstream resolutionOss;
     resolutionOss << "-z" << app_config_struct.jzintv_resolution_index;
     Log(LOG_INFO) << "Combo resolution argument: -z" << app_config_struct.jzintv_resolution_index;
 
     if (app_config_struct.jzintv_fullscreen) {
-        ADD_JZINTV_COMMAND(&commands, "--fullscreen");
+        ADD_JZINTV_COMMAND(&commands, "--fullscreen", false, "", false);
     }
-    ADD_JZINTV_COMMAND(&commands, roms_list_struct.list[index].file_name);
+
+    if (app_config_struct.use_external_jzintv) {
+#ifdef WIN32
+        ADD_JZINTV_COMMAND(&commands, "", false, app_config_struct.roms_folder_absolute_path << roms_list_struct.list[index].file_name, true);
+#else
+        ADD_JZINTV_COMMAND(&commands, "", false,app_config_struct.roms_folder_absolute_path << "\"" << roms_list_struct.list[index].file_name << "\"", true);
+#endif
+    } else {
+        ADD_JZINTV_COMMAND(&commands, "", false, app_config_struct.roms_folder_absolute_path << roms_list_struct.list[index].file_name, true);
+    }
 
     bool ecs_tape_auto = roms_list_struct.list[index].ecs_tape_name_auto;
     bool jlp_save_file_auto = roms_list_struct.list[index].jlp_save_file_auto;
@@ -1041,7 +1067,7 @@ bool start_emulation(int index) {
                         oss_command << vec[1];
                         msg << "\nEcs tape file: " << vec[1] << "\n";
                         Log(LOG_INFO) << "Ecs tape command:" << oss_command.str();
-                        ADD_JZINTV_COMMAND(&commands, oss_command.str());
+                        ADD_JZINTV_COMMAND(&commands, oss_command.str().c_str(), false, "" , false);
                     } else {
                         Log(LOG_INFO) << "Skipped custom Ecs tape command:" << cc;
                     }
@@ -1061,12 +1087,12 @@ bool start_emulation(int index) {
                         oss_command << vec[1];
                         msg << "\nJlp save file:" << vec[1] << "\n";
                         Log(LOG_INFO) << "Jlp save command:" << oss_command.str();
-                        ADD_JZINTV_COMMAND(&commands, oss_command.str());
+                        ADD_JZINTV_COMMAND(&commands, oss_command.str().c_str(), false, "" , false);
                     } else {
                         Log(LOG_INFO) << "Skipped custom Jlp save command:" << cc;
                     }
                 } else {
-                    ADD_JZINTV_COMMAND(&commands, cc);
+                    ADD_JZINTV_COMMAND(&commands, cc.c_str(), false, "" , false);
                 }
             }
         }
@@ -1086,7 +1112,7 @@ bool start_emulation(int index) {
             oss_command << "--ecs-tape=";
             oss_folder << app_config_struct.resource_folder_absolute_path << "Ecs/";
             create_folder(oss_folder.str());
-            oss_command << oss_folder.str();
+            oss_command << get_formatted_path(oss_folder.str().c_str(), true);
             ostringstream oss_file;
             switch (crc32) {
                 case 0xCE8FC699:
@@ -1112,7 +1138,7 @@ bool start_emulation(int index) {
             oss_command << oss_file.str();
             msg << "\nEcs tape file: " << oss_file.str() << "\n";
             Log(LOG_INFO) << "Automatic Ecs tape command:" << oss_command.str();
-            ADD_JZINTV_COMMAND(&commands, oss_command.str());
+            ADD_JZINTV_COMMAND(&commands, oss_command.str().c_str(), false, "" , false);
         }
         if (jlp_save_file_auto) {
             ostringstream oss_command;
@@ -1120,13 +1146,13 @@ bool start_emulation(int index) {
             oss_command << "--jlp-savegame=";
             oss_folder << app_config_struct.resource_folder_absolute_path << "Jlp/";
             create_folder(oss_folder.str());
-            oss_command << oss_folder.str();
+            oss_command << get_formatted_path(oss_folder.str().c_str(), true);
             ostringstream oss_file;
             oss_file << "jlp_" << gameName << ".jlp";
             oss_command << oss_file.str();
             msg << "\nJlp save file: " << oss_file.str() << "\n";
             Log(LOG_INFO) << "Automatic Jlp save command:" << oss_command.str();
-            ADD_JZINTV_COMMAND(&commands, oss_command.str());
+            ADD_JZINTV_COMMAND(&commands, oss_command.str().c_str(), false, "" , false);
         }
         if (msg.str().length() > 0) {
             string trimmed = msg.str().c_str();
@@ -1143,11 +1169,11 @@ bool start_emulation(int index) {
             free(resolution_arg);
         }
 
-        ADD_JZINTV_COMMAND(&commands, resolutionOss.str());
+        ADD_JZINTV_COMMAND(&commands, resolutionOss.str().c_str(), false, "" , false);
 
         if (app_config_struct.mobile_mode && app_config_struct.mobile_show_controls && !found_mouse_command) {
             app_config_struct.consume_mouse_events_only_for_simulate_controls = true;
-            ADD_JZINTV_COMMAND(&commands, JZINTV_MOUSE_COMMAND);
+            ADD_JZINTV_COMMAND(&commands, JZINTV_MOUSE_COMMAND, false, "", false);
         }
 
         // Keyboard hack file
@@ -1159,7 +1185,7 @@ bool start_emulation(int index) {
                 ADD_POPUP("File not found", "Cannot find specified hack file:\n\n" << file_hack << "\n\nCheck resources path or fix property file.");
                 return false;
             }
-            ADD_JZINTV_COMMAND(&commands, "--kbdhackfile=" << file_hack);
+            ADD_JZINTV_COMMAND(&commands, "--kbdhackfile=", false, file_hack, true);
         }
         free(data);
 
@@ -1172,7 +1198,7 @@ bool start_emulation(int index) {
                 ADD_POPUP("File not found", "Cannot find specified palette file:\n\n" << file_palette << "\n\nCheck resources path or fix property file.");
                 return false;
             }
-            ADD_JZINTV_COMMAND(&commands, "--gfx-palette=" << file_palette);
+            ADD_JZINTV_COMMAND(&commands, "--gfx-palette=", false, file_palette, true);
         }
         free(data);
     }
@@ -1181,8 +1207,30 @@ bool start_emulation(int index) {
         std::cout << "Starting...\n" << std::endl;
         int argc;
         char **argv = convert_to_argv_argc(&commands, &argc);
-        if (-10 == jzintv_entry_point(argc, argv)) {
-            ADD_POPUP("Emulation error", "Emulation error. Check console window for details");
+
+        if (app_config_struct.use_external_jzintv) {
+            string external_jzintv_complete_filename = app_config_struct.root_folder_for_configuration;
+#ifdef WIN32
+            external_jzintv_complete_filename.append("jzintv.exe");
+#else
+            external_jzintv_complete_filename.append("jzintv");
+#endif
+            if (!exist_file(external_jzintv_complete_filename.c_str())) {
+                ADD_POPUP("File not found", "Cannot find external jzIntv:\n\n" << external_jzintv_complete_filename << "\n\n");
+                return false;
+            }
+            string external_jzintv_dos_complete_filename = get_formatted_path(external_jzintv_complete_filename.c_str());
+            string external_jzintv_command = external_jzintv_dos_complete_filename.c_str();
+            for (int i=1; i < argc; i++) {
+                external_jzintv_command.append(" ");
+                external_jzintv_command.append(argv[i]);
+            }
+            system(external_jzintv_command.c_str());
+
+        } else {
+            if (-10 == jzintv_entry_point(argc, argv)) {
+                ADD_POPUP("Emulation error", "Emulation error. Check console window for details");
+            }
         }
         for (int i = 0; i < argc; i++) {
             free(argv[i]);
@@ -1589,8 +1637,8 @@ int main(int argc, char **argv) {
     load_configuration();
     if (app_config_struct.mobile_mode) {
         normalize_default_controls();
-        normalize_events();
     }
+    normalize_events();
 
     // Start all
     start_gui();

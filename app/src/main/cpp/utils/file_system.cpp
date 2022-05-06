@@ -3,6 +3,10 @@
 #include <string>
 #include <sys/stat.h>
 #include <cstdlib>
+#include <cstdio>
+#include <memory>
+#include <stdexcept>
+#include <array>
 
 bool exist_file(const char *fileName) {
     std::ifstream infile(fileName);
@@ -313,4 +317,50 @@ void create_folder(string folder) {
 #else
     mkdir(folder.c_str(), 0777);
 #endif
+}
+
+std::string get_formatted_path(const char* path, bool keep_final_slash) {
+#ifdef WIN32
+    string dos_command = "for %f in (\"";
+    dos_command.append(path);
+    dos_command.append("\") do @echo %~sf");
+
+    string res = exec(dos_command.c_str());
+
+    int len = res.length();
+    const char *resc = res.c_str();
+    while (resc[len - 1] == '\n' || resc[len - 1] == '\r') {
+        res.pop_back();
+        len = res.length();
+        resc = res.c_str();
+    }
+
+    if (!keep_final_slash) {
+        len = res.length();
+        resc = res.c_str();
+        while (resc[len - 1] == '/' || resc[len - 1] == '\\') {
+            res.pop_back();
+            len = res.length();
+            resc = res.c_str();
+        }
+    }
+
+    std::replace(res.begin(), res.end(), '/', '\\');
+    return res;
+#else
+    return path;
+#endif
+}
+
+std::string exec(const char* cmd) {
+    std::array<char, 128> buffer;
+    std::string result;
+    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
+    if (!pipe) {
+        throw std::runtime_error("popen() failed!");
+    }
+    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+        result += buffer.data();
+    }
+    return result;
 }

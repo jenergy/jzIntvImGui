@@ -211,6 +211,10 @@ bool get_force_fullscreen() {
     return true;
 }
 
+bool can_launch_external_jzintv() {
+    return false;
+}
+
 SDL_FRect get_default_jzintv_rendering_frect(bool is_portrait) {
     SDL_FRect tmp;
     tmp.x = 0;
